@@ -32,12 +32,54 @@ class db:
         self.collection = self.db[collection_name]
 
 ## API ##
+@app.route("/api/auth")
+def auth(request=request):
+    return True # Figure it out later
+
 @app.route("/api/userdata/<endpoint>", methods=["GET", "POST", "DELETE"])
 def userdata_endpoint(endpoint):
     method = request.method
     data = db("userdata", "user")
-    return {"code":200,
-            "message":"Basic Userdata endpoint"}
+    name = auth(request)
+    if name == False:
+        response = {
+            "code":401,
+            "message":"Not logged it"
+        }
+        return response
+    if endpoint == "flashcards":
+        # FLASH CARDS
+        if method == "GET":
+            # GET
+            pass
+
+        elif method == "POST":
+            # POST
+            pass
+
+        elif method == "DELETE":
+            # DELETE
+            pass
+        # Compile response
+        response = {}
+
+
+    elif endpoint == "notes":
+        # Notes
+        if method == "GET":
+            # GET
+            pass
+
+        elif method == "POST":
+            # POST
+            pass
+
+        elif method == "DELETE":
+            # DELETE
+            pass
+        # Compile response
+        response = {}
+    return response
 
 ## Starting ##
 if __name__ == "__main__":
