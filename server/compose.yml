@@ -1,0 +1,9 @@
+version: '3'
+services:
+  server:
+    container_name: premierscodingchallengeserver
+    image: premierscodingchallengeserver
+    ports:
+      - 9056:9056
+  
+    
