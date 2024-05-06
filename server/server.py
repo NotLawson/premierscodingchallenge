@@ -18,18 +18,12 @@ import json # For data handling
 from dotenv import load_dotenv # For .env
 from os import getenv # For using .env
 env=getenv
-import pymongo as mongo
-
+#import pymongo as mongo
+import db
 
 ## Setup ##
 load_dotenv() # Load env
 app = Flask(__name__)
-
-class db:
-    def __init__(self, db_name, collection_name):
-        self.client = mongo.MongoClient(f"mongodb://{env("mongoaddr")}:27017/")
-        self.db = self.client[db_name]
-        self.collection = self.db[collection_name]
 
 ## API ##
 @app.route("/api/auth")
@@ -39,7 +33,6 @@ def auth(request=request):
 @app.route("/api/userdata/<endpoint>", methods=["GET", "POST", "DELETE"])
 def userdata_endpoint(endpoint):
     method = request.method
-    data = db("userdata", "user")
     name = auth(request)
     if name == False:
         response = {
@@ -85,3 +78,4 @@ def userdata_endpoint(endpoint):
 if __name__ == "__main__":
     DEBUG = bool(env("DEBUG"))
     app.run(host=env("host"), port=env("port"), debug=DEBUG)
+
