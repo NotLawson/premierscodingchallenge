@@ -13,8 +13,12 @@ class NoObjFound(Exception):
     pass
 
 class _internalDB:
-    def __init__(self, dbPath, nosync = False):
-        self.dbPath = dbPath
+    def __init__(self, dbPath=False, nosync = False):
+        if not dbPath:
+            import os
+            self.dbPath = os.path.dirname(__file__)+"/db"
+        else:
+            self.dbPath = dbPath
         if not nosync:
             self.pull()
 
