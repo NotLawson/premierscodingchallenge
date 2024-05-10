@@ -8,6 +8,7 @@
 import wikipedia
 import textwrap
 import pyttsx3
+import os
 
 ### SEARCH FUNCTION TO SOURCE INFORMATION FROM WIKIPEDIA ###
 def search(topic, lines):
@@ -25,26 +26,55 @@ def search(topic, lines):
         for line in wrapped_summary:
             print(line)
 
-        ### PROGRAM OUTPUT ###
+        ### PROGRAM OUTPUT (TEXT AND AUDIO) ###
         text = f'{result}'
         engine.say(text)
         engine.runAndWait()
 
         print("")
 
-        choice = input("SEARCH AGAIN (Y/N)?: ").upper()
+        save = input("SAVE SUMMARY (Y/N)?: ").upper()
 
-        if choice == 'Y':
-            print("")
+        if save == "Y":
+            file_name = input("ENTER FILE NAME: ").upper()
 
-            topic = input("ENTER A TOPIC: ")
-            lines = int(input("NUMBER OF SENTENCES REQUIRED: "))
-            search(topic, lines)
-            
+            if os.path.exists(file_name):
+                print("ERROR: FILE ALREADY EXISTS.")
+                print("")
+                exit()
+                
+            with open(file_name, mode='w') as file:
+                file.write(wrapped_summary)
+                file.close()
+
+            choice = input("SEARCH AGAIN (Y/N)?: ").upper()
+
+            if choice == 'Y':
+                print("")
+
+                topic = input("ENTER A TOPIC: ")
+                lines = int(input("NUMBER OF SENTENCES REQUIRED: "))
+                search(topic, lines)
+                
+            else:
+                print("")
+                print("="*25)
+                exit()
+                
         else:
-            print("")
-            print("="*25)
-            exit()
+            choice = input("SEARCH AGAIN (Y/N)?: ").upper()
+
+            if choice == 'Y':
+                print("")
+
+                topic = input("ENTER A TOPIC: ")
+                lines = int(input("NUMBER OF SENTENCES REQUIRED: "))
+                search(topic, lines)
+                
+            else:
+                print("")
+                print("="*25)
+                exit()
 
     except Exception as e:
         print(f"ERROR: '{e}'")
@@ -66,6 +96,8 @@ def search(topic, lines):
             exit()
 
 ### CALLING THE 'SEARCH' FUNCTION ###
+print("NOTE: ENSURE THAT ALL ABBREVIATIONS, SLANG LANGUAGE, AND ACRONYMS ARE OMITTED FROM TOPIC INPUT.")
+
 topic = input("ENTER A TOPIC: ")
 lines = int(input("NUMBER OF SENTENCES REQUIRED: "))
 print("")
