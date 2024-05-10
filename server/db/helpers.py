@@ -16,7 +16,7 @@ class _internalDB:
     def __init__(self, dbPath=False, nosync = False):
         if not dbPath:
             import os
-            self.dbPath = os.path.dirname(__file__)+"/db"
+            self.dbPath = os.path.dirname(__file__)+"/dbfile"
         else:
             self.dbPath = dbPath
         if not nosync:
