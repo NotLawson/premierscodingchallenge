@@ -7,4 +7,5 @@ def wiki(topic, lines = 10):
     import requests as r
 
     re = r.get(url, headers={"topic":topic, "lines":lines})
-    return re.text
+    obj = re.json()
+    return obj["content"]

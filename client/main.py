@@ -3,7 +3,8 @@
 ##
 ## The app will be tkinter app with that can take wikipedia results 
 
-from tkinter import Tk, Label, Button, Entry
+from tkinter import Tk, Label, Button, Entry, Text, END
+from asyncio import run as arun
 #import tensorflow as tf
 
 from wikipedia_bypass import wiki
@@ -14,15 +15,19 @@ tk.title("Flashcards")
 
 # Widget Functions
 def submit():
+    search = widgets["input"].get()
+    widgets["output"].insert(END, f"Loading results for {search}...\n")
+    arun(submitcoro())
+async def submitcoro():
     message = widgets["input"].get()
-    widgets["output"].configure(text=message)
-    pass
+    resp = wiki(message)
+    widgets["output"].insert(END, resp)
 
 
 
 ## Widgets
 widgets = {
-    "output":Label(tk, text="Hi connor", ),
+    "output":Text(tk,),
     "input":Entry(tk),
     "submit":Button(tk, text="Submit", command = submit),
 
