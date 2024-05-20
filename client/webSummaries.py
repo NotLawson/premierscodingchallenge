@@ -3,7 +3,7 @@
 ### FILE FOR PROGRAMMING COMPETITION ON 5/5/24 IN ORDER TO BE REVIEWED. ###
 ### SOURCED FROM M-M BASIC DOS [VERSION 1.15], SUBSET OF WEB EXTENSION COMMAND ###
 
-### FEATURES: TEXT WRAPPING FOR BETTER VISUAL ELEMENTS, SPEECH MODULATOR TO DICTATE OUTPUT TEXT ###
+### FEATURES: TEXT WRAPPING FOR BETTER VISUAL ELEMENTS, SPEECH ELEMENT TO DICTATE OUTPUT TEXT ###
 
 import wikipedia
 import textwrap
@@ -11,11 +11,11 @@ import pyttsx3
 import os
 
 ### SEARCH FUNCTION TO SOURCE INFORMATION FROM WIKIPEDIA ###
-def search(topic, lines):
+def search(topic, lines, voice):
     try:
         ### INITIALISATION OF SPEECH UNIT ###
         engine = pyttsx3.init()
-        voice_num = 1
+        voice_num = voice
         voices = engine.getProperty('voices')
         engine.setProperty('voice', voices[voice_num].id)
 
@@ -41,64 +41,55 @@ def search(topic, lines):
             if os.path.exists(file_name):
                 print("ERROR: FILE ALREADY EXISTS.")
                 print("")
-                exit()
                 
             with open(file_name, mode='w') as file:
-                file.write(wrapped_summary)
+                file.write(str(wrapped_summary))
                 file.close()
 
-            choice = input("SEARCH AGAIN (Y/N)?: ").upper()
-
-            if choice == 'Y':
-                print("")
-
-                topic = input("ENTER A TOPIC: ")
-                lines = int(input("NUMBER OF SENTENCES REQUIRED: "))
-                search(topic, lines)
-                
-            else:
-                print("")
-                print("="*25)
-                exit()
+            print(f"SAVING '{file_name}'...")
+            print("")
                 
         else:
-            choice = input("SEARCH AGAIN (Y/N)?: ").upper()
-
-            if choice == 'Y':
-                print("")
-
-                topic = input("ENTER A TOPIC: ")
-                lines = int(input("NUMBER OF SENTENCES REQUIRED: "))
-                search(topic, lines)
-                
-            else:
-                print("")
-                print("="*25)
-                exit()
+            print("")
 
     except Exception as e:
         print(f"ERROR: '{e}'")
-
         print("")
+
+
+### CALLING THE 'SEARCH' FUNCTION ###
+running = True
+
+print("INTERNET ENCYCLOPEDIA SUMMARIES:")
+print("NOTE: ENSURE THAT ALL ABBREVIATIONS, SLANG LANGUAGE, AND ACRONYMS ARE OMITTED FROM TOPIC INPUT.")
+
+while running:
+
+    ### INPUT / OUTPUT ERROR HANDLING ###
+    
+    try:
+        topic = input("ENTER A TOPIC: ")
+        lines = int(input("NUMBER OF SENTENCES REQUIRED: "))
+        voice = int(input("DICTATE VOICE (0/1): "))
+        print("")
+        search(topic, lines, voice)
 
         choice = input("SEARCH AGAIN (Y/N)?: ").upper()
 
         if choice == 'Y':
             print("")
-            
+
             topic = input("ENTER A TOPIC: ")
             lines = int(input("NUMBER OF SENTENCES REQUIRED: "))
-            search(topic, lines)
-
+            voice = int(input("DICTATE VOICE (0/1): "))
+            print("")
+            search(topic, lines, voice)
+            
         else:
             print("")
             print("="*25)
-            exit()
+            running = False
 
-### CALLING THE 'SEARCH' FUNCTION ###
-print("NOTE: ENSURE THAT ALL ABBREVIATIONS, SLANG LANGUAGE, AND ACRONYMS ARE OMITTED FROM TOPIC INPUT.")
-
-topic = input("ENTER A TOPIC: ")
-lines = int(input("NUMBER OF SENTENCES REQUIRED: "))
-print("")
-search(topic, lines)
+    except Exception as e:
+        print(f"ERROR: '{e}'")
+        print("")
