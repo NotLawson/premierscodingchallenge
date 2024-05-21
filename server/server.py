@@ -45,7 +45,15 @@ def generate_token(username):
 TOKENSTORE = db.user.TokenStore()
 
 load_dotenv() # Load env
-app = Flask(__name__) 
+if __name__=="__main__":
+    app = Flask(__name__)
+    import log
+    from log import level
+
+    log = log.Logging()
+else:
+    from log import level
+    from __main__ import app, log
 
 users = db.user.db(os.path.dirname(db.user.__file__)+"/dbfile")
 notes = db.notes.db(os.path.dirname(db.notes.__file__)+"/dbfile")
@@ -58,9 +66,7 @@ def get_token():
     user = request.headers.get("x-api-user")
     password = request.headers.get("x-api-password")
     if user in users.refs():
-        print(f"{user} in {str(users.refs())}")
         userobj = users.get(user)
-        print(f"does {password} = {userobj.password}?")
         if userobj.password == password:
             token=generate_token(user)
 
@@ -71,7 +77,7 @@ def get_token():
         'code':401,
         "message":"Invalid Credentials",
         "credentials":[user, password]
-    })
+    }), 401
         
 
 @app.route("/api/auth")
@@ -89,12 +95,12 @@ def auth(request=request):
     return json.dumps({
         "code":401,
         "message":"Invalid Token"
-    })
+    }), 401
 
 @app.route("/api/usercreate/<username>/<password>/")
 def usercreate(username, password):
     if username in users.refs():
-        return json.dumps({"code":500, "message":"user already exists"})
+        return json.dumps({"code":500, "message":"user already exists"}), 500
     user = db.user.User(TOKENSTORE, username, password)
     users.put(username, user)
     users.push()
@@ -111,7 +117,7 @@ def userdata_endpoint(endpoint):
             "code":401,
             "message":"Not logged in"
         }
-        return response
+        return response, 401
     name = authenticate["user"]
     if endpoint == "flashcards":
         # FLASH CARDS
@@ -151,15 +157,18 @@ def userdata_endpoint(endpoint):
 def db_api(db_name, action):
     if db_name=="users":
         if action=="push":
+            log.log(f"Received database push order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
             users.push()
             return json.dumps({"code":200,
                                "message":"Pushed users db"})
         elif action=="pull":
+            log.log(f"Received database pull order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
             users.pull()
             return json.dumps({"code":200,
                                "message":"Pulled users db"})
         elif action=="refs":
-            return json.dumps({"code":404,
+            log.log(f"Received database refs order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
+            return json.dumps({"code":200,
                                "message":"found users refs",
                                "refs":users.refs()})
     elif db_name=="notes":
@@ -172,7 +181,7 @@ def db_api(db_name, action):
             return json.dumps({"code":200,
                                "message":"Pushed users db"})
     return json.dumps({"code":404,
-                               "message":"No db found"})
+                               "message":"No db found"}), 404
 ## Starting ##
 if __name__ == "__main__":
     DEBUG = bool(env("DEBUG"))
