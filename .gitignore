@@ -163,3 +163,4 @@ cython_debug/
 # DB files
 dbfile
 .vscode
+log.txt
