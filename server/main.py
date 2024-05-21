@@ -2,9 +2,10 @@
 
 ## First of all, messaging
 from multiprocessing import Queue
-#import log # custom logging library
+from log import Logging, level # custom logging library
 import flask
 app = flask.Flask(__name__) # for the webserver making thing
+log = Logging()
 
 apiq = Queue() # input Queue for the api server
 wappq = Queue() # input Queue for the web app server
@@ -35,7 +36,7 @@ def startupwebserver():
     global app
     from threading import Thread
     import wapp, server
-    return Thread(target=startupwebserverprocess, name="webserver")
+    return Thread(target=startupwebserverprocess, name="webserver", daemon=True)
 def startupwebserverprocess():
     global app
     app.run(port=5000,debug=False)
@@ -45,17 +46,14 @@ def startupwebserverprocess():
 if __name__ == "__main__":
     import sys, time
     webprocess = startupwebserver()
-    print("Starting webserver")
+    log.log("Starting webserver")
     webprocess.start()
-    print("webprocesss started")
-    print("starting loop")
+    log.log("webprocesss started", level.done)
+    log.log("starting loop")
     while True:
         try:
             time.sleep(1)
         except KeyboardInterrupt:
-            print("Detected ctr+c, breaking...")
+            log.log("Detected ctr+c, breaking...",level.warn)
             break
-    print("stopping webserver")
-    webprocess.kill()
-    print("webserver stopped")
-    print("Bye!")
+    log.log("Bye!",level.exit)
