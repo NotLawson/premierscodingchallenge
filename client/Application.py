@@ -27,8 +27,13 @@ def submit_flashcards():
         lines = input_entry2.get()
 
         width = 50
-        result = wikipedia.summary(topic, sentences=lines)
+        #result = wikipedia.summary(topic, sentences=lines)
+        import wikipedia_bypass as wiki
+        result = wiki.wiki(topic, lines)
+
+
         wrapped_summary = textwrap.wrap(result, width=width)
+
 
         output_text.delete(1.0, END)
 
@@ -48,7 +53,11 @@ def dictate_flashcards():
         lines = input_entry2.get()
 
         width = 50
-        result = wikipedia.summary(topic, sentences=lines)
+        #result = wikipedia.summary(topic, sentences=lines)
+        
+        import wikipedia_bypass as wiki
+        result = wiki.wiki(topic, lines)
+
         wrapped_summary = textwrap.wrap(result, width=width)
 
         engine = pyttsx3.init()
