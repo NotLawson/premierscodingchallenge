@@ -4,7 +4,7 @@ from flask import Flask
 if __name__=="__main__":
     app = Flask(__name__)
 else:
-    from __main__ import app 
+    from __main__ import app    
 
 
 @app.route("/")
