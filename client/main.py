@@ -7,7 +7,7 @@ from tkinter import Tk, Label, Button, Entry, Text, END
 from asyncio import run as arun
 #import tensorflow as tf
 
-from wikipedia_bypass import wiki
+from client.wiki_wrapper import wiki
 
 tk = Tk(screenName="Flashcards")
 
