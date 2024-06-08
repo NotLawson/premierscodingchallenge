@@ -13,7 +13,40 @@ from tkinter import messagebox, filedialog, END, Scrollbar, Toplevel
 import os
 import pyttsx3
 import wikipedia
-import textwrap    
+import textwrap
+from threading import Thread
+
+class task:
+    def __init__(self, task):
+        self.func = task
+        
+
+    def __call__(self):
+        self.thread = Thread(target=self.func, daemon=True)
+        self.thread.start()
+
+class KeybindManager:
+    binds = {}
+    def __init__(self, object):
+        self.object = object
+        self.object.bind("<Key>", self.handle)
+
+    def bind(self, keycode, task):
+        try:
+            if self.binds[keycode] != None:
+                raise KeybindTaken(f"The keybind {keycode} has already been taken")
+        except:
+            self.binds[keycode] = task
+            
+        
+        
+    def handle(self, event):
+        try: self.binds[event.keysym]()
+        except:
+            pass
+
+class KeybindTaken(Exception):
+    pass
 
 def save_as_flashcards():
     pass
@@ -23,14 +56,15 @@ def save_flashcards():
 
 def flashcards_search():
     root.after(1, submit_flashcards)
-    
+
 def submit_flashcards():
     try:
+        output_text.delete(1.0, END)
+        output_text.insert(END, "Searching..." + "\n")
         topic = input_entry1.get()
         lines = input_entry2.get()
 
         width = 50
-        #result = wikipedia.summary(topic, sentences=lines)
         import wiki_wrapper as wiki
         result = wiki.wiki(topic, lines)
 
@@ -56,8 +90,6 @@ def dictate_flashcards():
         lines = input_entry2.get()
 
         width = 50
-        #result = wikipedia.summary(topic, sentences=lines)
-        
         import wiki_wrapper as wiki
         result = wiki.wiki(topic, lines)
 
@@ -121,8 +153,8 @@ button_frame.grid(row=0, column=1, padx=10, pady=10, sticky="ns")
 
 ### BUTTON CREATION ###
 
-submit_button = tk.Button(button_frame, text="Submit", command=submit_flashcards)
-dictate_button = tk.Button(button_frame, text="Dictate", command=dictate_flashcards)
+submit_button = tk.Button(button_frame, text="Submit", command=task(submit_flashcards)) # This button gets information from wikipedia or another source (if we implement)
+dictate_button = tk.Button(button_frame, text="Dictate", command=task(dictate_flashcards)) # not sure
 
 dictate_button.grid(row=0, column=0, pady=5, sticky="ew")
 
@@ -136,15 +168,15 @@ help_menu = tk.Menu(main_menu,tearoff=False)
 main_menu.add_cascade(label="File",menu=file_menu)
 main_menu.add_cascade(label="Help",menu=help_menu)
 
-file_menu.add_command(label="New", compound=tk.LEFT, accelerator="Ctrl+N", command=clear_output)
-file_menu.add_command(label="Save", compound=tk.LEFT, accelerator="Ctrl+S", command=save_flashcards)
-file_menu.add_command(label="Save As", compound=tk.LEFT, accelerator="Ctrl+Shift+S", command=save_as_flashcards)
-file_menu.add_command(label="Print", compound=tk.LEFT, accelerator="Ctrl+P", command=print_flashcards)
+file_menu.add_command(label="New", compound=tk.LEFT, accelerator="Ctrl+N", command=task(clear_output))
+file_menu.add_command(label="Save", compound=tk.LEFT, accelerator="Ctrl+S", command=task(save_flashcards))
+file_menu.add_command(label="Save As", compound=tk.LEFT, accelerator="Ctrl+Shift+S", command=task(save_as_flashcards))
+file_menu.add_command(label="Print", compound=tk.LEFT, accelerator="Ctrl+P", command=task(print_flashcards))
 file_menu.add_separator()
-file_menu.add_command(label="Exit", compound=tk.LEFT, accelerator="Alt+F4", command=exit_application)
+file_menu.add_command(label="Exit", compound=tk.LEFT, accelerator="Alt+F4", command=task(exit_application))
 
 help_menu.add_command(label="About", compound=tk.LEFT, command=about)
-help_menu.add_command(label="Quick Guide", compound=tk.LEFT, accelerator="Ctrl+H", command=user_guide)
+help_menu.add_command(label="Quick Guide", compound=tk.LEFT, accelerator="Ctrl+H", command=task(user_guide))
 
 ### OUTPUT AND INPUT DISPLAY BOXES ###
 
@@ -163,11 +195,15 @@ input_label2.grid(row=1, column=0, padx=(0, 5))
 input_entry2 = tk.Entry(input_frame, width=30)
 input_entry2.grid(row=1, column=1)
 
-submit_button_box = tk.Button(input_frame, text="Submit", command=submit_flashcards)
+submit_button_box = tk.Button(input_frame, text="Submit", command=task(submit_flashcards))
 submit_button_box.grid(row=0, column=2, padx=(5, 0))
 
 root.config(menu=main_menu)
 
-### MAIN LOOP ###
+### KEYBINDS ###
+keybind = KeybindManager(root)
+keybind.bind("Return", submit_flashcards)
 
+
+### MAIN LOOP ###
 root.mainloop()
