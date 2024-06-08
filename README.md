@@ -69,7 +69,29 @@ Problems:
 
 ## Development
 
-*haven't started yet*
+### How it's gonna work
+
+### 1. Web App
+
+Pros:
+- It would have a modern look and feel
+- Easy to create and maintain (simple html)
+- All platforms, no downloads required
+
+Cons:
+- Requires a server on all the time + domain etc + internet connection
+ 
+### 2. Desktop application
+
+Pros:
+- Full offline capability
+- Extra privacy
+
+Cons:
+- Most python exe compilers are flagged as viruses
+- harder to support all platforms
+- requires downloads etc
+
 
 ## Quickstart
 

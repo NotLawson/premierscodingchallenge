@@ -8,7 +8,7 @@ def wiki(topic, lines = 10):
     import wikipedia
     try: 
         # Try getting straight from wikipedia
-        result = wikipedia.summary(topic=topic, sentences = lines)
+        result = wikipedia.summary(topic, sentences = lines)
         return result
     except:
         try:

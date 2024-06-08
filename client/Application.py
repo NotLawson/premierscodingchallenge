@@ -21,6 +21,9 @@ def save_as_flashcards():
 def save_flashcards():
     pass
 
+def flashcards_search():
+    root.after(1, submit_flashcards)
+    
 def submit_flashcards():
     try:
         topic = input_entry1.get()
@@ -28,7 +31,7 @@ def submit_flashcards():
 
         width = 50
         #result = wikipedia.summary(topic, sentences=lines)
-        import wikipedia_bypass as wiki
+        import wiki_wrapper as wiki
         result = wiki.wiki(topic, lines)
 
 
@@ -55,7 +58,7 @@ def dictate_flashcards():
         width = 50
         #result = wikipedia.summary(topic, sentences=lines)
         
-        import wikipedia_bypass as wiki
+        import wiki_wrapper as wiki
         result = wiki.wiki(topic, lines)
 
         wrapped_summary = textwrap.wrap(result, width=width)
