@@ -3,8 +3,11 @@
 ### FOR PARTIAL REQUIREMENTS FOR DIGITAL TECHNOLOGY GRADE
 ### AND PREMIERS CODING CHALLENGE YEAR 2024 ###
 
-### WEB SUMMARIES SORUCED FROM M-M BASIC [VERSION 1.15] ###
+### WEB SUMMARIES SOURCED FROM M-M BASIC [VERSION 1.15] ###
 ### BY MINAS MARENTIS 2022 , 2023 , 2024 ###
+
+### LOGGING SOURCED FROM https://github.com/notlawson/betterlog-python ###
+## BY LAWSON CONALLIN ###
 
 ### [VERSION 1.01] APPLICATION BETA STAGE ###
 
@@ -12,10 +15,12 @@ import tkinter as tk
 from tkinter import messagebox, filedialog, END, Scrollbar, Toplevel
 import os
 import pyttsx3
-import wikipedia
 import textwrap
 from threading import Thread
+from log import Logging, level
+import wiki_wrapper as wiki
 
+log = Logging("app", loglevel=level.debug)
 class task:
     def __init__(self, task):
         '''
@@ -81,7 +86,22 @@ class KeybindTaken(Exception):
     pass
 
 def save_as_flashcards():
-    pass
+    name = "save as"
+    path = filedialog.asksaveasfilename(defaultextension=".flashcards", title="flashcards.txt")
+    log.log(f"Got path {path}", level.debug, name)
+    try: 
+        log.log("Trying to create file", name=name)
+        open(path, "x")
+        log.log("File created", level.done, name)
+    except:
+        log.log("file already exists", level.warn, name)
+    try:
+        log.log("Writing to file...", name=name)   
+        open(path, "w").write(str(output_text.dump("1.0", "end")))
+        log.log("Finished writing to file", level.done, name)
+    except Exception as e:
+        log.log(f"Failed to save file {path}, error: {e}", level.fail, name)
+
 
 def save_flashcards():
     pass
@@ -90,27 +110,33 @@ def flashcards_search():
     root.after(1, submit_flashcards)
 
 def submit_flashcards():
+    name = "search"
     try:
+        log.log("starting search", name=name)
         output_text.delete(1.0, END)
         output_text.insert(END, "Searching..." + "\n")
         topic = input_entry1.get()
         lines = input_entry2.get()
 
         width = 50
-        import wiki_wrapper as wiki
+        log.log(f"searching for {topic}", name=name)
         result = wiki.wiki(topic, lines)
+        log.log("Finsished.", level.done, name)
 
-
+        log.log("Wrapping", name=name)
         wrapped_summary = textwrap.wrap(result, width=width)
 
 
         output_text.delete(1.0, END)
 
+        log.log("inserting search")
         for line in wrapped_summary:
             output_text.insert(END, line + '\n')
+        log.log("Done", level.done, name)
 
     except Exception as e:
         error1 = messagebox.showinfo("ERROR:", e)
+        log.log(f"Error encountered while searching: {e}", level.error, name)
         
 
 def print_flashcards():
@@ -158,12 +184,16 @@ def user_guide():
     pass    
 
 def exit_application():
+    log.log("Exiting, goodbye!", level.exit)
     exit()
 
 def main_loop():
+    name = "mainloop"
+    log.log("mainloop started", level.done, name)
     while True:
         pass
 
+log.log("Init Tkinter")
 root = tk.Tk()
 root.title("Study Flashcard Generator")
 root.geometry("600x450")
@@ -171,24 +201,29 @@ root.resizable(False, False)
 
 ### THIS IS THE TEXT OUTPUT FRAME WIDGET ###
 
+log.log("packing output frame")
 output_frame = tk.Frame(root)
 output_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
 ### SCROLLING SIDE BAR FUNCTION ###
 
+log.log("packing scrollbar")
 scrollingbar = Scrollbar(output_frame)
 scrollingbar.pack(side=tk.RIGHT, fill=tk.Y)
 
+log.log("packing output_text")
 output_text = tk.Text(output_frame, height=20, width=60, yscrollcommand=scrollingbar.set)
 output_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
 scrollingbar.config(command=output_text.yview)
 
+log.log("packing button frame")
 button_frame = tk.Frame(root)
 button_frame.grid(row=0, column=1, padx=10, pady=10, sticky="ns")
 
 ### BUTTON CREATION ###
 
+log.log("packing buttons")
 submit_button = tk.Button(button_frame, text="Submit", command=task(submit_flashcards)) # This button gets information from wikipedia or another source (if we implement)
 dictate_button = tk.Button(button_frame, text="Dictate", command=task(dictate_flashcards)) # not sure
 
@@ -196,6 +231,7 @@ dictate_button.grid(row=0, column=0, pady=5, sticky="ew")
 
 ### UTILITY MENU CREATION ###
 
+log.log("packing menu")
 main_menu = tk.Menu()
 
 file_menu = tk.Menu(main_menu,tearoff=False)
@@ -216,6 +252,7 @@ help_menu.add_command(label="Quick Guide", compound=tk.LEFT, accelerator="Ctrl+H
 
 ### OUTPUT AND INPUT DISPLAY BOXES ###
 
+log.log("packing inputs")
 input_frame = tk.Frame(root)
 input_frame.grid(row=1, column=0, columnspan=2, padx=15, pady=15, sticky="ew")
 
@@ -237,7 +274,9 @@ submit_button_box.grid(row=0, column=2, padx=(5, 0))
 root.config(menu=main_menu)
 
 ### KEYBINDS ###
+log.log("starting keybind manager")
 keybind = KeybindManager(root)
+log.log("binding keys")
 keybind.bind("Return", task(submit_flashcards))
 
 
@@ -249,7 +288,7 @@ engine.start()
 '''
 
 mainloop = task(main_loop)
-print("starting main loop")
+log.log("Starting mainloop")
 mainloop()
-print("starting tkinter")
+log.log("starting tkinter")
 root.mainloop()
