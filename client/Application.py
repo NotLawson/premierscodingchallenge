@@ -18,12 +18,44 @@ from threading import Thread
 
 class task:
     def __init__(self, task):
+        '''
+        How to use:
+        create a task: helloworld = task(lambda: print("Hello World!"))
+        run the task: helloworld.start() OR helloworld()
+        It then runs in the background to stop tkinter from freezing'''
         self.func = task
         
 
     def __call__(self):
         self.thread = Thread(target=self.func, daemon=True)
         self.thread.start()
+    
+    def start(self):
+        self.__call__()
+
+class TkEngine:
+    def __init__(self, root, framerate):
+        '''
+        This was supposed to run tkinter without blocking the main thread by running it in a seperate thread, but that isn't working
+        How to use:
+        create the engine: engine = TkEngine(root, framerate)
+        start the engine: engine.start()
+        '''
+        self.root = root
+        self.framerate = framerate
+        self.wait = 1000 / framerate
+
+    def start(self):
+        self.thread = Thread(target=self.loop, daemon=True)
+        
+    def loop(self):
+        while True:
+            self.tick()
+            root.update()
+
+    def tick(self):
+        from time import sleep
+        sleep(self.wait / 1000)
 
 class KeybindManager:
     binds = {}
@@ -128,6 +160,10 @@ def user_guide():
 def exit_application():
     exit()
 
+def main_loop():
+    while True:
+        pass
+
 root = tk.Tk()
 root.title("Study Flashcard Generator")
 root.geometry("600x450")
@@ -202,8 +238,18 @@ root.config(menu=main_menu)
 
 ### KEYBINDS ###
 keybind = KeybindManager(root)
-keybind.bind("Return", submit_flashcards)
+keybind.bind("Return", task(submit_flashcards))
 
 
 ### MAIN LOOP ###
+'''framerate = 60
+
+engine = TkEngine(root, framerate)
+engine.start()
+'''
+
+mainloop = task(main_loop)
+print("starting main loop")
+mainloop()
+print("starting tkinter")
 root.mainloop()
