@@ -13,12 +13,13 @@
 
 import tkinter as tk
 from tkinter import messagebox, filedialog, END, Scrollbar, Toplevel
-import os
+import os, time
 import pyttsx3
 import textwrap
 from threading import Thread
 from log import Logging, level
 import wiki_wrapper as wiki
+import progressbar as taskbar
 
 log = Logging("app", loglevel=level.debug)
 class task:
@@ -29,14 +30,32 @@ class task:
         run the task: helloworld.start() OR helloworld()
         It then runs in the background to stop tkinter from freezing'''
         self.func = task
+        self.name = task.__name__
+        self.widgets = [
+            f"time -- (TASK) [{self.name}] Running for ", taskbar.Timer("%s"), "s ", taskbar.AnimatedMarker()
+        ]
+        self.thread = Thread(target=self.func, daemon=True)
+        
         
 
     def __call__(self):
-        self.thread = Thread(target=self.func, daemon=True)
+        #Thread(target=self._start, daemon=True).start()
         self.thread.start()
     
     def start(self):
         self.__call__()
+
+    def _start(self):
+        starttime = time.perf_counter()
+        bar = taskbar.ProgressBar(max_value=1, widgets=self.widgets, redirect_stdout=True).start()
+        while self.thread.is_alive():
+            bar.update(0)
+        bar.update(1)
+        out = f"\rtime -- (DONE) [{self.name}] Finished in {bar.start_time}      "
+        print(out)
+
+    def start_ignore(self):
+        self.thread.start()
 
 class TkEngine:
     def __init__(self, root, framerate):
@@ -289,6 +308,6 @@ engine.start()
 
 mainloop = task(main_loop)
 log.log("Starting mainloop")
-mainloop()
+mainloop.start_ignore()
 log.log("starting tkinter")
 root.mainloop()

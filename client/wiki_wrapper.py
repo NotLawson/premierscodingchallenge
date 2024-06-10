@@ -19,10 +19,11 @@ def wiki(topic, lines = 10):
         try:
             # Try getting it from the bypass
             re = r.get(url, headers={"topic":topic, "lines":lines})
+            log.log("Connected to bypass", level.done)
             obj = re.json()
             return obj["content"]
-        except:
-            log.log("Failed to connect to bypass, returning dummy text", level.fail)
+        except Exception as e:
+            log.log("Error occoured while connecting to bypass, returning dummy text, error: "+str(e), level.fail)
             # If all else fails...
             return dummy(topic)
 
