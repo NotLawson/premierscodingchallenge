@@ -1,22 +1,29 @@
 ## Lib for the wikipedia bypass
 ## To be used with the main client
+from log import Logging, level
+log = Logging("wikiwrapper", level.debug)
+import requests as r
+import wikipedia
 
 def wiki(topic, lines = 10):
     url = "https://testing.thatrandompi.xyz/wikipedia_bypass"
     lines = str(lines) # because
-    import requests as r
-    import wikipedia
     try: 
         # Try getting straight from wikipedia
+        log.log(f"Accessing acutal wikipedia for {topic}")
         result = wikipedia.summary(topic, sentences = lines)
+        log.log("Done, returning...", level.done)
         return result
     except:
+        log.log("Failed to connect to wikipedia, connecting to bypass", level.warn)
         try:
             # Try getting it from the bypass
             re = r.get(url, headers={"topic":topic, "lines":lines})
+            log.log("Connected to bypass", level.done)
             obj = re.json()
             return obj["content"]
-        except:
+        except Exception as e:
+            log.log("Error occoured while connecting to bypass, returning dummy text, error: "+str(e), level.fail)
             # If all else fails...
             return dummy(topic)
 
