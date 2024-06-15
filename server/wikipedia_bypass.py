@@ -6,12 +6,21 @@ from flask import Flask, request
 import json
 import wikipedia
 
-app = Flask(__name__)
+if __name__=="__main__":
+    app = Flask(__name__)
+    import log
+    from log import level
+
+    log = log.Logging()
+else:
+    from log import level
+    from __main__ import app, log
 
 @app.route("/wikipedia_bypass")
 def wikibypass():
     topic = request.headers["topic"]
-    lines = int(request.headers["lines"])
+    try: lines = int(request.headers["lines"])
+    except: lines = 10
     try:
         summary = wikipedia.summary(topic, sentences = lines)
         return json.dumps({"code":200,"message":f"Topic '{topic}' found", "content":summary})

@@ -3,39 +3,35 @@
 ## First of all, messaging
 from multiprocessing import Queue
 from log import Logging, level # custom logging library
-import flask
+import flask, os
 app = flask.Flask(__name__) # for the webserver making thing
 log = Logging()
+
+
+    
 
 apiq = Queue() # input Queue for the api server
 wappq = Queue() # input Queue for the web app server
 events = Queue() # For general server events like restart, shutdown, so on so forth\
 
-'''if __name__ == "__main__":
-    from subprocess import Popen
-    import sys
-    import time
+class event:
+    def __init__(self, name, origin, data):
+        self.name = name
+        self.origin = origin
+        self.data = data
+    def __str__(self):
+        return self.name
 
-    apip = Popen([sys.executable,"server.py"], shell=True)
-    print("Started API")
-    appp = Popen([sys.executable, "app.py"], shell=True)
-    print("Started app")
-    print("Starting loop...")
-    while True:
-        try:
-            time.sleep(1)
-        except KeyboardInterrupt:
-            print("Detected ctr+c, breaking...")
-            break
-    print("Killing subprocesses...")
-    apip.kill()
-    appp.kill()
-    print("Processes killed, exiting")'''
+@app.route("/restart")
+def restart():
+    # Doesn't work atm
+    events.put(event("restart", "/restart", None))
+    return "restarting now!"
 
 def startupwebserver():
     global app
     from threading import Thread
-    import wapp, server
+    import wapp, server, wikipedia_bypass
     return Thread(target=startupwebserverprocess, name="webserver", daemon=True)
 def startupwebserverprocess():
     global app
@@ -52,8 +48,14 @@ if __name__ == "__main__":
     log.log("starting loop")
     while True:
         try:
-            time.sleep(1)
+            current = events.get(block=False)
+            if current.name == "restart":
+                log.log(f"Restarting comming from {current.origin}", level.warn)
+                os.execv(sys.argv[0], sys.argv)
+                exit()
         except KeyboardInterrupt:
             log.log("Detected ctr+c, breaking...",level.warn)
             break
+        except:
+            pass
     log.log("Bye!",level.exit)
