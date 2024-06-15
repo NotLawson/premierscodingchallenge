@@ -18,7 +18,6 @@ class User:
         else:
             return False
     def get_token(self, token):
-        print("nice")
         self.tokens.append(token)
 
 class Token:

@@ -1,0 +1,57 @@
+h1, h2, h3, p, a, li {
+    font-family: "Solway", sans-serif;
+    font-style: normal;
+}
+.main {
+    text-align: center;
+    padding: 50px 50px 50px 50px;
+}
+body {
+    background-color: #FFFFFF;
+    font-size: 150%;
+}
+.navbar {
+    padding: 30px 30px 30px 30px;
+    
+    border-radius: 20px;
+    background-color: white;
+}
+
+.maincontainer {
+    display: grid;
+    grid-template-columns: 9% 89%;
+    row-gap: 30px;
+    column-gap: 30px;
+}
+.content {
+    padding: 30px 30px 30px 30px;
+    border-radius: 20px;
+    background-color: white;
+}
+.button {
+    display: inline-block;
+    border-radius: 4px;
+    background-color: transparent;
+    border: none;
+    font-size: 28px;
+    padding: 20px;
+    width: 0px;
+    cursor: pointer;
+    margin: 5px;
+  }
+
+
+/* Rules for sizing the icon. */
+.material-symbols-outlined.md-18 { font-size: 18px; }
+.material-symbols-outlined.md-24 { font-size: 24px; }
+.material-symbols-outlined.md-36 { font-size: 36px; }
+.material-symbols-outlined.md-48 { font-size: 48px; }
+.material-symbols-outlined.full { font-size: 200%;}
+
+/* Rules for using icons as black on a light background. */
+.material-symbols-outlined.md-dark { color: rgba(0, 0, 0, 0.54); }
+.material-symbols-outlined.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+
+/* Rules for using icons as white on a dark background. */
+.material-symbols-outlined.md-light { color: rgba(255, 255, 255, 1); }
+.material-symbols-outlined.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }

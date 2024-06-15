@@ -1,0 +1,20 @@
+{% extends "main.html" %}
+
+{% block imports %}
+<link href="/static/css/index.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %} 
+                <h1>Hello, {{user.username}}</h1>
+                <h2>{{date}}</h2>
+                <div class="container">
+                    <div class="item"><p>Suggestion 1</p></div>
+                    <div class="item"><p>Suggestion 2</p></div>
+                    <div class="item"><p>Suggestion 3</p></div>
+                    <div class="item"><p>Suggestion 4</p></div>
+                    <div class="item"><p>Suggestion 5</p></div>
+                    <div class="item"><p>Suggestion 6</p></div>
+                    <div class="item"><p>Suggestion 7</p></div>
+                    <div class="item"><p>Suggestion 8</p></div>
+                </div>
+{% endblock %} 

@@ -1,0 +1,39 @@
+<!--
+This is the base html template file for this app
+It will be used for most pages where the contents is generic, such as the homepage
+This template has <> variables:
+    - title: The title of the page
+-->
+
+<html>
+    <head>
+        <title>{{title}}</title>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% block imports %}
+        {% endblock %}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+        <link href="/static/css/main.css" rel="stylesheet">
+    </head>
+    <body>
+        <div id="main" class="maincontainer">
+            <!--NAVBAR-->
+            <div id="navbar" class="navbar">
+                <button class="button" onclick="window.location = '/'"><span class="material-symbols-outlined full">home</span>&ensp;</button>
+                <br><br>
+                <button class="button" onclick="window.location = '/leaderboard'"><span class="material-symbols-outlined full">leaderboard</span>&ensp;</button>
+                <br><br>
+                <button class="button" onclick="window.location = '/sets'"><span class="material-symbols-outlined full">tabs</span>&ensp;</button>
+                <br><br>
+                <button class="button"><span class="material-symbols-outlined full">event_note</span>&ensp;</button>
+                <br><br>
+                <button class="button"><span class="material-symbols-outlined full">settings</span>&ensp;</button>
+            </div>
+            <!--MAIN CONTENT-->
+            <div id="content" class="content">
+                {% block content %} 
+                {% endblock %} 
+            </div>
+        </div>
+    </body>
+</html>

@@ -21,6 +21,7 @@ import os # for good measure
 env=getenv
 import random # For token generation
 import db
+import helper
 
 def generate_token(username):
     import random
@@ -34,17 +35,16 @@ def generate_token(username):
             for i in range(20):
                 token+=random.choice(chars)
                 i+=1
-            for i in TOKENSTORE.tokens:
+            for i in helper.TOKENSTORE.tokens:
                 if token==i.token:
                     taken = True
                     break
             if not taken:
                 break
-    TOKENSTORE.tokens.append(db.user.Token(token,username))
+    helper.TOKENSTORE.tokens.append(db.user.Token(token,username))
     return token
 
 ## Setup ##
-TOKENSTORE = db.user.TokenStore()
 
 load_dotenv() # Load env
 if __name__=="__main__":
@@ -84,26 +84,13 @@ def get_token():
 
 @app.route("/api/auth")
 def auth(request=request):
-    token = request.headers.get("x-api-token")
-    valid = False
-    for i in TOKENSTORE.tokens:
-        if i.token == token:
-            user = i.user
-            return json.dumps({
-            "code":200,
-            "message":"Valid Token",
-            "user":user
-            })
-    return json.dumps({
-        "code":401,
-        "message":"Invalid Token"
-    }), 401
+    return helper.auth(request)
 
 @app.route("/api/usercreate/<username>/<password>/")
 def usercreate(username, password):
     if username in users.refs():
         return json.dumps({"code":500, "message":"user already exists"}), 500
-    user = db.user.User(TOKENSTORE, username, password)
+    user = db.user.User(helper.TOKENSTORE, username, password)
     users.put(username, user)
     users.push()
     return json.dumps({"code":200, "message":"user added"})
