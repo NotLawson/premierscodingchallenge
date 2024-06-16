@@ -1,0 +1,19 @@
+{% extends "home.html" %}
+
+{% block imports %}
+<link href="/static/css/login.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1>Login</h1>
+{% if message != None %}
+<div class="error"><h3>Error: {{ message }}</h3></div>
+{% endif %}
+<form action="/login" method="post">
+    <label for="username"><p>Username:</p></label><br>
+    <input type="text" id="username" name="username"><br>
+    <label for="password"><p>Password:</p></label><br>
+    <input type="text" id="password" name="password"><br><br>
+    <input type="submit" value="Submit">
+</form>  
+{% endblock %}

@@ -23,26 +23,7 @@ import random # For token generation
 import db
 import helper
 
-def generate_token(username):
-    import random
-    chars = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', 'g', 'G', 'h', 'H', 'i', 'I', 'j',
-             'J', 'k', 'K', 'l', 'L', 'm', 'M', 'n', 'N', 'o', 'O', 'p', 'P', 'q', 'Q', 'r', 'R', 's', 'S', 't', 'T',
-             'u', 'U', 'v', 'V', 'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
-    while True:
-            taken = False
-            token=""
-            i=0
-            for i in range(20):
-                token+=random.choice(chars)
-                i+=1
-            for i in helper.TOKENSTORE.tokens:
-                if token==i.token:
-                    taken = True
-                    break
-            if not taken:
-                break
-    helper.TOKENSTORE.tokens.append(db.user.Token(token,username))
-    return token
+
 
 ## Setup ##
 
@@ -67,11 +48,11 @@ flash = db.flashcards.db(os.path.dirname(db.flashcards.__file__)+"/dbfile")
 def get_token():
     user = request.headers.get("x-api-user")
     password = request.headers.get("x-api-password")
+    log.log(f"is '{user} in {users.refs()}'")
     if user in users.refs():
         userobj = users.get(user)
         if userobj.password == password:
-            token=generate_token(user)
-
+            token=helper.generate_token(user)
             return json.dumps({"code":200,
                     "message":"Success",
                     "token":token})
@@ -90,7 +71,7 @@ def auth(request=request):
 def usercreate(username, password):
     if username in users.refs():
         return json.dumps({"code":500, "message":"user already exists"}), 500
-    user = db.user.User(helper.TOKENSTORE, username, password)
+    user = db.user.User(username, password)
     users.put(username, user)
     users.push()
     return json.dumps({"code":200, "message":"user added"})

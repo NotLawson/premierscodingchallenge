@@ -1,7 +1,10 @@
 ## WEB APP ##
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, make_response
 from datetime import datetime
 import db, os, helper
+from log import Logging, level
+
+log = Logging("web app", level.debug)
 users = db.user.db(os.path.dirname(db.user.__file__)+"/dbfile")
 notes = db.notes.db(os.path.dirname(db.notes.__file__)+"/dbfile")
 flash = db.flashcards.db(os.path.dirname(db.flashcards.__file__)+"/dbfile")
@@ -61,7 +64,22 @@ def sets():
 
 @app.route("/login", methods = ["GET", "POST"])
 def login():
-    return "there isn't actually a login page yet, get the token from the api"
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        log.log(f"is '{username} in {str(users.refs())}'?")
+        if username in users.refs():
+            userobj = users.get(username)
+        else:
+            return render_template("login.html", message = "Wrong username", title = "Login")
+        print(f"does {password} equal {userobj.password}?")
+        if userobj.password == (password):
+            token=helper.generate_token(username)
+            resp = make_response(redirect("/"))
+            resp.set_cookie("token", token)
+            return resp
+        return render_template("login.html", message = "Wrong Password", title = "Login")
+    return render_template("login.html", message = None, title = "Login")
 
 if __name__ == "__main__":
     app.run(port=5001, debug=True)
