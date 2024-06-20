@@ -35,7 +35,7 @@ def startupwebserver():
     return Thread(target=startupwebserverprocess, name="webserver", daemon=True)
 def startupwebserverprocess():
     global app
-    app.run(port=5000,debug=False)
+    app.run(host="0.0.0.0",port=5000,debug=False)
 
     
 
