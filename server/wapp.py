@@ -62,6 +62,15 @@ def sets():
 
     return render_template("sets.html", title="Sets")
 
+@app.route("/sets/<setid>")
+def sets_info(setid):
+    # AUTH
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login")
+    setobj = flash.get(setid)
+    return render_template("setinfo.html", set=setobj, username = resp["user"])
+
 @app.route("/login", methods = ["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -96,8 +105,35 @@ def create_user():
         resp.set_cookie("token", token)
         return resp
     return render_template("createuser.html", message = None)
-    
+
+def render_settings(userobj):
+    dict_ = {
+        "name":userobj.name,
+    }
+    return dict_
+
+@app.route("/settings", methods = ["GET", "POST"])
+def settings():
+    # AUTH
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login")
+    userobj = users.get(resp["user"])
+    username = resp["user"]
+    message = None
+    if request.method == "POST":
+        message = "Updated"
+        name = request.form.get("name")
+        if name != "":
+            userobj.name = name
+            log.log(f"Name Change: {name}")
+        password = request.form.get("password")
+        if password != "":
+            userobj.password = request.form.get("password")
+            log.log(f"Password change: '{password}'")
+        users.put(username, userobj)
         
+    return render_template("settings.html", message = message, settings=render_settings(userobj))
 
 
 if __name__ == "__main__":

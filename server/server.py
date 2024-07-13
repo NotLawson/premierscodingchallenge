@@ -76,52 +76,26 @@ def usercreate(username, password):
     users.push()
     return json.dumps({"code":200, "message":"user added"})
 
-
-@app.route("/api/userdata/<endpoint>", methods=["GET", "POST", "DELETE"])
-def userdata_endpoint(endpoint):
-    method = request.method
-    data = db("userdata", "user")
-    authenticate = auth(request)
-    if authenticate["code"] == 401:
-        response = {
-            "code":401,
-            "message":"Not logged in"
-        }
-        return response, 401
-    name = authenticate["user"]
-    if endpoint == "flashcards":
-        # FLASH CARDS
-        if method == "GET":
-            # GET
-            pass
-
-        elif method == "POST":
-            # POST
-            pass
-
-        elif method == "DELETE":
-            # DELETE
-            pass
-        # Compile response
-        response = {}
-
-
-    elif endpoint == "notes":
-        # Notes
-        if method == "GET":
-            # GET
-            pass
-
-        elif method == "POST":
-            # POST
-            pass
-
-        elif method == "DELETE":
-            # DELETE
-            pass
-        # Compile response
-        response = {}
-    return response
+@app.route("/api/sets/<endpoint>", methods = ["GET", "POST", "DELETE"])
+def setsapi(endpoint):
+    path = endpoint.split("/")
+    if path[0]=="star":
+        setid=path[1]
+        token = request.headers.get(token)
+        resp=helper.authw(token)
+        userobj = users.get(resp["user"])
+        userobj.starred.append("setid")
+        users.put(resp["user"], userobj)
+        return "{'code':200,'message':'done'}", 200
+    
+    elif path[0] == "create":
+        name = request.headers.get("name")
+        while True:
+            token = helper.generate_id()
+            if token not in flash.refs():
+                break
+    else:
+        return "{'code':404, 'message':'endpoint not found'}", 404
 
 @app.route("/api/db/<db_name>/<action>")
 def db_api(db_name, action):

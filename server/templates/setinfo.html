@@ -1,0 +1,12 @@
+{% extends "main.html" %}
+{% block imports %}
+<link href="/static/css/sets.css" rel="stylesheet">
+<script src="/static/js/sets.js"></script>
+{% endblock %}
+
+{% block content %}
+<h1>{{set.name}}</h1>
+<h2>By {{set.author}}</h2>
+<button type="button" onclick="star('{{set.id}}');alert('Starred!')">Star</button>
+{{ set.html | safe }}
+{% endblock %}

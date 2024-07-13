@@ -8,6 +8,7 @@ class TokenStore:
         pass
 class User:
     tokens = []
+    starred = []
     def __init__(self, name, password, permissions=0):
         self.name = name
         self.password = password
