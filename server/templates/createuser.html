@@ -5,16 +5,18 @@
 {% endblock %}
 
 {% block content %}
-<h1>Login</h1>
+<h1>Create user</h1>
 {% if message != None %}
 <div class="error"><h3>Error: {{ message }}</h3></div>
 {% endif %}
-<form action="/login" method="post">
+<form action="/createuser" method="post">
+    <label for="name"><p>Given Name:</p></label><br>
+    <input type="text" id="name" name="name"><br>
     <label for="username"><p>Username:</p></label><br>
     <input type="text" id="username" name="username"><br>
     <label for="password"><p>Password:</p></label><br>
     <input type="password" id="password" name="password"><br><br>
     <input type="submit" value="Submit">
-</form>  
-<a href="/createuser">Signup</a>
+</form> 
+<a href="/login">Login</a>
 {% endblock %}

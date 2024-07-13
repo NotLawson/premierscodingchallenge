@@ -4,15 +4,15 @@ from datetime import datetime
 import db, os, helper
 from log import Logging, level
 
-log = Logging("web app", level.debug)
-users = db.user.db(os.path.dirname(db.user.__file__)+"/dbfile")
-notes = db.notes.db(os.path.dirname(db.notes.__file__)+"/dbfile")
-flash = db.flashcards.db(os.path.dirname(db.flashcards.__file__)+"/dbfile")
+users = db.user.db()
+notes = db.notes.db()
+flash = db.flashcards.db()
 
 if __name__=="__main__":
     app = Flask(__name__)
+    log = Logging("web app", level.debug)
 else:
-    from __main__ import app    
+    from __main__ import app, log
 
 class testobj:
     def __init__(self, name):
@@ -72,7 +72,7 @@ def login():
             userobj = users.get(username)
         else:
             return render_template("login.html", message = "Wrong username", title = "Login")
-        print(f"does {password} equal {userobj.password}?")
+        log.log(f"does {password} equal {userobj.password}?")
         if userobj.password == (password):
             token=helper.generate_token(username)
             resp = make_response(redirect("/"))
@@ -80,6 +80,25 @@ def login():
             return resp
         return render_template("login.html", message = "Wrong Password", title = "Login")
     return render_template("login.html", message = None, title = "Login")
+
+@app.route("/createuser", methods = ["GET", "POST"])
+def create_user():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        name = request.form.get("name")
+        if username in users.refs():
+            return render_template("createuser.html", message = "User already exists")
+        log.log(f"Creating user {username} with password {password}")
+        users.put(username, db.user.User(name, password))
+        resp = make_response(redirect("/"))
+        token=helper.generate_token(username)
+        resp.set_cookie("token", token)
+        return resp
+    return render_template("createuser.html", message = None)
+    
+        
+
 
 if __name__ == "__main__":
     app.run(port=5001, debug=True)

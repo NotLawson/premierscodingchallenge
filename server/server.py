@@ -38,9 +38,9 @@ else:
     from log import level
     from __main__ import app, log
 
-users = db.user.db(os.path.dirname(db.user.__file__)+"/dbfile")
-notes = db.notes.db(os.path.dirname(db.notes.__file__)+"/dbfile")
-flash = db.flashcards.db(os.path.dirname(db.flashcards.__file__)+"/dbfile")
+users = db.user.db()
+notes = db.notes.db()
+flash = db.flashcards.db()
 
 
 ## API ##
