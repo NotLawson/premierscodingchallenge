@@ -1,7 +1,7 @@
 ## WEB APP ##
 from flask import Flask, render_template, url_for, request, redirect, make_response
 from datetime import datetime
-import db, os, helper
+import db, os, helper, json
 from log import Logging, level
 
 users = db.user.db()
@@ -59,8 +59,23 @@ def sets():
     resp = helper.authw(request)
     if resp["code"] == 401:
         return redirect("/login")
+    sets = []
+    refs = flash.refs()
+    for ref in refs:
+        sets.append(flash.get(ref))
 
-    return render_template("sets.html", title="Sets")
+    return render_template("sets.html", title="Sets", sets=sets)
+
+@app.route("/player")
+def player():
+    progress = int(request.cookies.get("question"))
+    setid = request.cookies.get("setid")
+    setobj = flash.get(setid)
+    try: 
+        question = setobj.content[progress-1]
+    except IndexError:
+        return render_template("endplayer.html", set=setobj)
+    return render_template("player.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
 
 @app.route("/sets/<setid>")
 def sets_info(setid):
@@ -68,8 +83,38 @@ def sets_info(setid):
     resp = helper.authw(request)
     if resp["code"] == 401:
         return redirect("/login")
+    log.log(str(flash.refs()), level.warn)
     setobj = flash.get(setid)
     return render_template("setinfo.html", set=setobj, username = resp["user"])
+
+@app.route("/sets/create", methods = ["GET", "POST"])
+def create_set():
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login")
+    if request.method == "POST":
+        name = request.form["name"]
+        content = str(request.files["content"].read().decode("utf-8"))
+        content = json.loads(content)["content"]
+        while True:
+            id = helper.generate_id()
+            if id not in flash.refs():
+                break
+        
+        setobj = db.flashcards.flash(id, name, resp["user"], content)
+        flash.put(id, setobj)
+        return redirect("/sets")
+    return render_template("createset.html")
+
+@app.route("/play/<setid>")
+def play(setid):
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login")
+    resp = make_response(redirect("/player"))
+    resp.set_cookie("setid", setid)
+    resp.set_cookie("question", "1")
+    return resp
 
 @app.route("/login", methods = ["GET", "POST"])
 def login():

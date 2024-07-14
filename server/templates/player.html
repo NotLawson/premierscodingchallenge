@@ -1,0 +1,39 @@
+<!--
+This is the base html template file for this app
+It will be used for most pages where the contents is generic, such as the homepage
+This template has <> variables:
+    - title: The title of the page
+-->
+
+<html>
+    <head>
+        <title>{{set.name}} - Player</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+        <link href="/static/css/main.css" rel="stylesheet">
+        <link href="/static/css/player.css" rel="stylesheet">
+        <script defer>let question = {{question|tojson}};let progress = {{progressjs}}</script>
+        <script src="/static/js/player.js" defer></script>
+        <script src="/static/js/confetti.js" defer></script>
+        <script src="/static/js/cookies.js"></script>
+        
+    </head>
+    <body id="body"><canvas id="boom"></canvas>
+        <div id="cheese">
+            <h2 class="bar">{{set.name}}    <progress id="progress" value="{{progress}}" max='{{set.total}}'>{{((progress)/set.total)*100}}</progress></h2>
+
+            <div class="card">
+                <h1 id="question">Question</h1>
+                <div class="answerkey">
+                    <p class="answerkeyitem" id="A">A: Answer A</p>
+                    <p class="answerkeyitem" id="B">B: Answer B</p>
+                    <p class="answerkeyitem" id="C">C: Answer C</p>
+                    <p class="answerkeyitem" id="D">D: Answer D</p>
+                </div>
+                <h2 id="answer" hidden>Answer</h2> 
+            </div>
+        </div>
+        
+    </body>
+</html>

@@ -40,7 +40,21 @@ body {
     margin: 5px;
   }
 
-
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
 /* Rules for sizing the icon. */
 .material-symbols-outlined.md-18 { font-size: 18px; }
 .material-symbols-outlined.md-24 { font-size: 24px; }

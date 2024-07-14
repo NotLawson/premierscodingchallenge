@@ -79,11 +79,10 @@ def usercreate(username, password):
 @app.route("/api/sets/<endpoint>", methods = ["GET", "POST", "DELETE"])
 def setsapi(endpoint):
     path = endpoint.split("/")
+    resp=helper.authw(request)
+    userobj = users.get(resp["user"])
     if path[0]=="star":
         setid=path[1]
-        token = request.headers.get(token)
-        resp=helper.authw(token)
-        userobj = users.get(resp["user"])
         userobj.starred.append("setid")
         users.put(resp["user"], userobj)
         return "{'code':200,'message':'done'}", 200
@@ -91,9 +90,17 @@ def setsapi(endpoint):
     elif path[0] == "create":
         name = request.headers.get("name")
         while True:
-            token = helper.generate_id()
-            if token not in flash.refs():
+            id = helper.generate_id()
+            if id not in flash.refs():
                 break
+        content = json.loads(request.data)["content"]
+        obj = db.flashcards.flash(id, name, userobj.name, content)
+        flash.put(id, obj)
+        return {
+            "code":200, 
+            "message":"Created",
+            "id":id
+        }
     else:
         return "{'code':404, 'message':'endpoint not found'}", 404
 
@@ -115,6 +122,22 @@ def db_api(db_name, action):
             return json.dumps({"code":200,
                                "message":"found users refs",
                                "refs":users.refs()})
+    elif db_name=="flash":
+        if action=="push":
+            log.log(f"Received database push order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
+            flash.push()
+            return json.dumps({"code":200,
+                               "message":"Pushed flash db"})
+        elif action=="pull":
+            log.log(f"Received database pull order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
+            flash.pull()
+            return json.dumps({"code":200,
+                               "message":"Pulled flash db"})
+        elif action=="refs":
+            log.log(f"Received database refs order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
+            return json.dumps({"code":200,
+                               "message":"found flash refs",
+                               "refs":flash.refs()})
     elif db_name=="notes":
         if action=="push":
             notes.push()
@@ -126,6 +149,7 @@ def db_api(db_name, action):
                                "message":"Pushed users db"})
     return json.dumps({"code":404,
                                "message":"No db found"}), 404
+
 ## Starting ##
 if __name__ == "__main__":
     DEBUG = bool(env("DEBUG"))
