@@ -1,0 +1,16 @@
+{% extends "player/player.html" %}
+
+{% block playerjs %}
+<script src="/static/js/player/multi-3.js" defer></script>
+{% endblock %}
+
+{% block question %}
+<div class="card">
+    <h1 id="question"></h1>
+    <div class="answerkey">
+        <p class="answerkeyitem" id="A">A: </p>
+        <p class="answerkeyitem" id="B">B: </p>
+        <p class="answerkeyitem third" id="C">C: </p>
+    </div>
+</div>
+{% endblock %}

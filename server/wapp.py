@@ -74,8 +74,16 @@ def player():
     try: 
         question = setobj.content[progress-1]
     except IndexError:
-        return render_template("endplayer.html", set=setobj)
-    return render_template("player.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
+        return render_template("player/end.html", set=setobj)
+    if question["type"] == "multi-4":
+        return render_template("player/multi-4.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
+    elif question["type"] == "multi-3":
+        return render_template("player/multi-3.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
+    elif question["type"] == "multi-2":
+        return render_template("player/multi-2.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
+    elif question["type"] == "slide":
+        return render_template("player/slide.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
+
 
 @app.route("/sets/<setid>")
 def sets_info(setid):
@@ -100,8 +108,8 @@ def create_set():
             id = helper.generate_id()
             if id not in flash.refs():
                 break
-        
-        setobj = db.flashcards.flash(id, name, resp["user"], content)
+        userobj = users.get(resp["user"])
+        setobj = db.flashcards.flash(id, name, userobj.name, content)
         flash.put(id, setobj)
         return redirect("/sets")
     return render_template("createset.html")
