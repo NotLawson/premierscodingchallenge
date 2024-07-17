@@ -1,0 +1,24 @@
+{% extends "main.html" %}
+{% block imports %}
+<link href="/static/css/sets.css" rel="stylesheet">
+<script src="/static/js/sets.js"></script>
+{% endblock %}
+
+{% block content %}
+<h1>{{set.name}}</h1>
+<h2>By {{set.author}}</h2>
+<button type="button" onclick="star('{{set.id}}');alert('Starred!')">Star</button>
+<button type="button" onclick="location.href='/play/{{set.id}}'">Play</button><br>
+<table>
+    <tr>
+        <th><p>Question</p></th>
+        <th><p>Answer</p></th>
+    </tr>
+{% for question in set.content %}
+    <tr>
+        <td><p>{{question["question"]}}</p></td>
+        <td><p>{{question["answers"][0]}}</p></td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}

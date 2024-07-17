@@ -1,0 +1,44 @@
+{
+    "content": [
+        {
+            "type": "multi-4",
+            "question": "Question 1",
+            "answers": [
+                "True",
+                "False",
+                "False",
+                "False"
+            ]
+        },
+        {
+            "type": "multi-4",
+            "question": "Question 2",
+            "answers": [
+                "True",
+                "False",
+                "False",
+                "False"
+            ]
+        },
+        {
+            "type": "multi-4",
+            "question": "Question 3",
+            "answers": [
+                "True",
+                "False",
+                "False",
+                "False"
+            ]
+        },
+        {
+            "type": "multi-4",
+            "question": "Question 4",
+            "answers": [
+                "True",
+                "False",
+                "False",
+                "False"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+{% block imports %}
+<link href="/static/css/sets.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1>Sets</h1>
+<p>WIP</p>
+<a href="/sets/create">+ Create</a>
+<div class="container">
+    {% for set in sets %}
+    <div class="item"><h3><a href="/sets/{{set.id}}">{{set.name}}</a></h3><br><p>By: {{set.author}}</p></div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -8,8 +8,9 @@ class TokenStore:
         pass
 class User:
     tokens = []
-    def __init__(self, username, password, permissions=0):
-        self.username = username
+    starred = []
+    def __init__(self, name, password, permissions=0):
+        self.name = name
         self.password = password
         self.permissions = permissions
     def login(self, password):
@@ -18,7 +19,6 @@ class User:
         else:
             return False
     def get_token(self, token):
-        print("nice")
         self.tokens.append(token)
 
 class Token:
@@ -29,4 +29,5 @@ class Token:
         return self.token
 
 class db(_internalDB):
-    pass
+    def __init__(self):
+        super().__init__(os.path.dirname(__file__)+"/dbfile")

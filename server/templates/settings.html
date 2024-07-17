@@ -1,0 +1,19 @@
+{% extends "home.html" %}
+
+{% block imports %}
+<link href="/static/css/settings.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1>settings</h1>
+{% if message != None %}
+<div class="error"><h3>{{ message }}</h3></div>
+{% endif %}
+<form action="/settings" method="post">
+    <label for="name"><p>Name</p></label>
+    <input type="text" id="name" name="name" value="{{ settings['name'] }}">
+    <label for="password"><p>Password:</p></label>
+    <input type="password" id="password" name="password">
+    <input type="submit" value="Update">
+</form>  
+{% endblock %}

@@ -12,7 +12,7 @@ log = Logging()
 
 apiq = Queue() # input Queue for the api server
 wappq = Queue() # input Queue for the web app server
-events = Queue() # For general server events like restart, shutdown, so on so forth\
+events = Queue() # For general server events like restart, shutdown, so on so forth
 
 class event:
     def __init__(self, name, origin, data):
@@ -35,7 +35,7 @@ def startupwebserver():
     return Thread(target=startupwebserverprocess, name="webserver", daemon=True)
 def startupwebserverprocess():
     global app
-    app.run(port=5000,debug=False)
+    app.run(host="0.0.0.0",port=5000,debug=False)
 
     
 

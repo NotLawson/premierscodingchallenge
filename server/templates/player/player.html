@@ -1,0 +1,29 @@
+<!--
+This is the base html template file for this the player
+-->
+
+<html>
+    <head>
+        <title>{{set.name}} - Player</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+        <link href="/static/css/main.css" rel="stylesheet">
+        <link href="/static/css/player.css" rel="stylesheet">
+        <script defer>let question = {{question|tojson}};let progress = {{progressjs}}</script>
+        {% block playerjs %}
+        {% endblock %}
+        <script src="/static/js/confetti.js" defer></script>
+        <script src="/static/js/cookies.js"></script>
+        
+    </head>
+    <body id="body"><canvas id="boom"></canvas>
+        <div id="cheese">
+            <h2 class="bar">{{set.name}}    <progress id="progress" value="{{progress}}" max='{{set.total}}'>{{((progress)/set.total)*100}}</progress></h2>
+            {% block question %}
+            
+            {% endblock %}
+        </div>
+        
+    </body>
+</html>
