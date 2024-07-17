@@ -1,4 +1,5 @@
 # Premier's Coding Challenge 2024
+> <b>The app is now LIVE at https://testing.thatrandompi.xyz</b>
 
 <b>[Notion page for project tracking](https://notlawson.notion.site/Digital-Tech-Project-29619290f81d4ec6b35c3d7f72906a30?pvs=4)</b>
 
@@ -69,29 +70,7 @@ Problems:
 
 ## Development
 
-### How it's gonna work
-
-### 1. Web App
-
-Pros:
-- It would have a modern look and feel
-- Easy to create and maintain (simple html)
-- All platforms, no downloads required
-
-Cons:
-- Requires a server on all the time + domain etc + internet connection
- 
-### 2. Desktop application
-
-Pros:
-- Full offline capability
-- Extra privacy
-
-Cons:
-- Most python exe compilers are flagged as viruses
-- harder to support all platforms
-- requires downloads etc
-
+*haven't started yet*
 
 ## Quickstart
 
