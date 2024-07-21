@@ -43,9 +43,9 @@ jobs:
         cd premierscodingchallenge
     - name: Build dev container
       env:
-        DEV_TOKEN: ${{ secrets.DEV_TOKEN }}
+        TOKEN: ${{ secrets.DEV_TOKEN }}
       run: |
-        echo {{secrets.TOKEN}} | docker login ghcr.io -u USERNAME --password-stdin
+        echo $TOKEN | docker login ghcr.io -u notlawson --password-stdin
         docker build -t ghcr.io/notlawson/premierscodingchallenge:dev .
     - name: Push container
       run: | 
