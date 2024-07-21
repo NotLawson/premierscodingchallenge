@@ -9,7 +9,12 @@ on:
   pull_request:
     branches: [ "main" ]
   release:
-    
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
 
 permissions:
   contents: read
@@ -33,38 +38,45 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
+
   build-dev:
     runs-on: ubuntu-latest
     environment: development
     steps:
-    - name: Pull repo
-      run: |
-        git clone https://github.com/NotLawson/premierscodingchallenge.git
-        cd premierscodingchallenge
-    - name: Build dev container
-      env:
-        TOKEN: ${{ secrets.DEV_TOKEN }}
-      run: |
-        echo $TOKEN | docker login ghcr.io -u notlawson --password-stdin
-        docker build -t ghcr.io/notlawson/premierscodingchallenge:dev .
-    - name: Push container
-      run: | 
-        docker push ghcr.io/notlawson/premierscodingchallenge:dev
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: notlawson
+          password: ${{ secrets.DEV_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: server
+          push: true
+          tags: ${{env.IMAGE_NAME}}:dev
 
   build-prod:
     runs-on: ubuntu-latest
     environment: production
     steps:
-    - name: Pull repo
-      run: |
-        git clone https://github.com/NotLawson/premierscodingchallenge.git
-        cd premierscodingchallenge
-    - name: Build prod container
-      env:
-        TOKEN: ${{ secrets.PROD_TOKEN }}
-      run: |
-        echo $TOKEN | docker login ghcr.io -u notlawson --password-stdin
-        docker build -t ghcr.io/notlawson/premierscodingchallenge:latest .
-    - name: Push container
-      run: | 
-        docker push ghcr.io/notlawson/premierscodingchallenge:latest
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: notlawson
+          password: ${{ secrets.PROD_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: server
+          push: true
+          tags: ${{env.IMAGE_NAME}}:latest
