@@ -59,7 +59,7 @@ jobs:
         with:
           context: server
           push: true
-          tags: ${{env.IMAGE_NAME}}:dev
+          tags: ghcr.io/${{env.IMAGE_NAME}}:dev
 
   build-prod:
     runs-on: ubuntu-latest
@@ -80,4 +80,4 @@ jobs:
         with:
           context: server
           push: true
-          tags: ${{env.IMAGE_NAME}}:latest
+          tags: ghcr.io/${{env.IMAGE_NAME}}:latest
