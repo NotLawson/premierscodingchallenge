@@ -43,6 +43,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
   build-dev:
+    needs: check
     runs-on: ubuntu-latest
     environment: development
     steps:
@@ -67,6 +68,7 @@ jobs:
           curl -H "Authorization: Bearer ${{env.WATCHTOWER}}" watchtower.thatrandompi.xyz:443/v1/update
 
   build-prod:
+    needs: ["check", "build-dev"]
     runs-on: ubuntu-latest
     environment: production
     steps:
