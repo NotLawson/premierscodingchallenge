@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+{% block imports %}
+<link href="/static/css/sets.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1>Lessons</h1>
+<p>WIP</p>
+<a href="/lessons/create">+ Create</a>
+<div class="container">
+    {% for lesson in lessons %}
+    <div class="item"><h3><a href="/lessons/{{lesson.id}}">{{lesson.name}}</a></h3><br><p>By: {{lesson.author}}</p></div>
+    {% endfor %}
+</div>
+{% endblock %}

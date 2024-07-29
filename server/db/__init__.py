@@ -4,10 +4,10 @@
 if __name__ == "__main__":
     ## Testing purposes
     import user
-    import notes
+    import lesson
     import flashcards
 else:
-    from db import user, flashcards, notes
+    from db import user, flashcards, lesson
 
 
 if __name__ == "__main__":

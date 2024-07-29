@@ -12,7 +12,6 @@ class flash:
         self.author = author
         self.content = content
         self.total = len(content)
-        self.html = f"<h3>Empty for {name}</h3>"
 
 class setobj:
     name="Testing Set"

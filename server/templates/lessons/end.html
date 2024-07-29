@@ -1,0 +1,30 @@
+<!--
+This is the base html template file for this app
+It will be used for most pages where the contents is generic, such as the homepage
+This template has <> variables:
+    - title: The title of the page
+-->
+
+<html>
+    <head>
+        <title>{{set.name}} - Player</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+        <link href="/static/css/main.css" rel="stylesheet">
+        <link href="/static/css/player.css" rel="stylesheet">
+        <script src="/static/js/player.js" defer></script>
+        <script src="/static/js/cookies.js"></script>
+        
+    </head>
+    <body id="body"><canvas id="boom"></canvas>
+        <div id="cheese">
+
+            <div class="card">
+                <h1>Completed {{lesson.name}}</h1>
+                <a href="/sets">Home</a>
+            </div>
+        </div>
+        
+    </body>
+</html>

@@ -5,7 +5,7 @@ import db, os, helper, json
 from log import Logging, level
 
 users = db.user.db()
-notes = db.notes.db()
+lessons = db.lesson.db()
 flash = db.flashcards.db()
 
 if __name__=="__main__":

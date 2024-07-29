@@ -39,7 +39,7 @@ else:
     from __main__ import app, log
 
 users = db.user.db()
-notes = db.notes.db()
+notes = db.lesson.db()
 flash = db.flashcards.db()
 
 
