@@ -7,7 +7,7 @@
 ### BY MINAS MARENTIS 2022 , 2023 , 2024 ###
 
 ### LOGGING SOURCED FROM https://github.com/notlawson/betterlog-python ###
-## BY LAWSON CONALLIN ###
+### BY LAWSON CONALLIN ###
 
 ### [VERSION 1.01] APPLICATION BETA STAGE ###
 
