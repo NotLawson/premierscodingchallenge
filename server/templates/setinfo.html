@@ -16,8 +16,8 @@
     </tr>
 {% for question in set.content %}
     <tr>
-        <td><p>{{question["question"]}}</p></td>
-        <td><p>{{question["answers"][0]}}</p></td>
+        <td><p>{{question["term"]}}</p></td>
+        <td><p>{{question["definition"]}}</p></td>
     </tr>
 {% endfor %}
 </table>

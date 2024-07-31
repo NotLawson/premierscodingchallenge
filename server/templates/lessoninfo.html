@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-<h1>{{set.name}}</h1>
-<h2>By {{set.author}}</h2>
+<h1>{{lesson.name}}</h1>
+<h2>By {{lesson.author}}</h2>
 <button type="button" onclick="star('{{lesson.id}}');alert('Starred!')">Star</button>
 <button type="button" onclick="location.href='/learn/{{lesson.id}}'">Learn</button><br>
 <p>{{lesson.desc}}</p>

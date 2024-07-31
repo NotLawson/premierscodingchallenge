@@ -4,15 +4,17 @@ from datetime import datetime
 import db, os, helper, json
 from log import Logging, level
 
-users = db.user.db()
-lessons = db.lesson.db()
-flash = db.flashcards.db()
 
 if __name__=="__main__":
     app = Flask(__name__)
     log = Logging("web app", level.debug)
+    
+    users = db.Database("db/users")
+    lessons = db.Database("db/lessons")
+    flash = db.Database("db/flash")
+
 else:
-    from __main__ import app, log
+    from __main__ import app, log, users, lessons, flash
 
 class testobj:
     def __init__(self, name):
@@ -23,7 +25,7 @@ def index():
     # AUTH
     resp = helper.authw(request)
     if resp["code"] == 401:
-        return redirect("/login")
+        return redirect("/login?redirect="+request.path)
     userobj = users.get(resp["user"])
 
     day = datetime.now().strftime("%A")
@@ -49,7 +51,7 @@ def leaderboard():
     # AUTH
     resp = helper.authw(request)
     if resp["code"] == 401:
-        return redirect("/login")
+        return redirect("/login?redirect="+request.path)
 
     return render_template("leaderboard.html", title="Leaderboard")
 
@@ -58,31 +60,24 @@ def sets():
     # AUTH
     resp = helper.authw(request)
     if resp["code"] == 401:
-        return redirect("/login")
+        return redirect("/login?redirect="+request.path)
     sets = []
-    refs = flash.refs()
+    refs = flash.keys()
     for ref in refs:
         sets.append(flash.get(ref))
 
     return render_template("sets.html", title="Sets", sets=sets)
 
-@app.route("/player")
-def player():
+@app.route("/flashcards")
+def flashcards_player():
     progress = int(request.cookies.get("question"))
     setid = request.cookies.get("setid")
     setobj = flash.get(setid)
     try: 
         question = setobj.content[progress-1]
     except IndexError:
-        return render_template("player/end.html", set=setobj)
-    if question["type"] == "multi-4":
-        return render_template("player/multi-4.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
-    elif question["type"] == "multi-3":
-        return render_template("player/multi-3.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
-    elif question["type"] == "multi-2":
-        return render_template("player/multi-2.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
-    elif question["type"] == "slide":
-        return render_template("player/slide.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
+        return render_template("flashcards/end.html", set=setobj)
+    return render_template("flashcards/card.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
 
 
 @app.route("/sets/<setid>")
@@ -90,8 +85,8 @@ def sets_info(setid):
     # AUTH
     resp = helper.authw(request)
     if resp["code"] == 401:
-        return redirect("/login")
-    log.log(str(flash.refs()), level.warn)
+        return redirect("/login?redirect="+request.path)
+    log.log(str(flash.keys()), level.warn)
     setobj = flash.get(setid)
     return render_template("setinfo.html", set=setobj, username = resp["user"])
 
@@ -99,17 +94,17 @@ def sets_info(setid):
 def create_set():
     resp = helper.authw(request)
     if resp["code"] == 401:
-        return redirect("/login")
+        return redirect("/login?redirect="+request.path)
     if request.method == "POST":
         name = request.form["name"]
         content = str(request.files["content"].read().decode("utf-8"))
         content = json.loads(content)["content"]
         while True:
             id = helper.generate_id()
-            if id not in flash.refs():
+            if id not in flash.keys():
                 break
         userobj = users.get(resp["user"])
-        setobj = db.flashcards.flash(id, name, userobj.name, content)
+        setobj = db.flash(id, name, userobj.name, content)
         flash.put(id, setobj)
         return redirect("/sets")
     return render_template("createset.html")
@@ -118,26 +113,105 @@ def create_set():
 def play(setid):
     resp = helper.authw(request)
     if resp["code"] == 401:
-        return redirect("/login")
-    resp = make_response(redirect("/player"))
+        return redirect("/login?redirect="+request.path)
+    resp = make_response(redirect("/flashcards"))
     resp.set_cookie("setid", setid)
     resp.set_cookie("question", "1")
     return resp
+
+
+## LESSONS
+
+@app.route("/lessons")
+def lessons_home():
+    # AUTH
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login?redirect="+request.path)
+    sets = []
+    refs = lessons.keys()
+
+    for ref in refs:
+        sets.append(lessons.get(ref))
+
+    return render_template("lessons.html", title="Lessons", lessons=sets)
+
+@app.route("/player")
+def player():
+    progress = int(request.cookies.get("question"))
+    setid = request.cookies.get("lessonid")
+    setobj = lessons.get(setid)
+    try: 
+        question = setobj.content[progress-1]
+    except IndexError:
+        return render_template("lessons/end.html", lesson=setobj)
+    if question["type"] == "multi-4":
+        return render_template("lessons/multi-4.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
+    elif question["type"] == "multi-3":
+        return render_template("lessons/multi-3.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
+    elif question["type"] == "multi-2":
+        return render_template("lessons/multi-2.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
+    elif question["type"] == "slide":
+        return render_template("lessons/slide.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
+
+
+@app.route("/lessons/<lessonid>")
+def lessons_info(lessonid):
+    # AUTH
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login?redirect="+request.path)
+    log.log(str(lessons.keys()), level.warn)
+    lessonobj = lessons.get(lessonid)
+    return render_template("lessoninfo.html", lesson=lessonobj, username = resp["user"])
+
+@app.route("/lessons/create", methods = ["GET", "POST"])
+def create_lesson():
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login?redirect="+request.path)
+    if request.method == "POST":
+        name = request.form["name"]
+        desc = request.form["desc"]
+        content = str(request.files["content"].read().decode("utf-8"))
+        content = json.loads(content)["content"]
+        while True:
+            id = helper.generate_id()
+            if id not in lessons.keys():
+                break
+        userobj = users.get(resp["user"])
+        lessonobj = db.lesson(id, name, userobj.name, desc, content)
+        lessons.put(id, lessonobj)
+        return redirect("/lessons")
+    return render_template("createlesson.html")
+
+@app.route("/learn/<lessonid>")
+def learn(lessonid):
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login?redirect="+request.path)
+    resp = make_response(redirect("/player"))
+    resp.set_cookie("lessonid", lessonid)
+    resp.set_cookie("question", "1")
+    return resp
+
 
 @app.route("/login", methods = ["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        log.log(f"is '{username} in {str(users.refs())}'?")
-        if username in users.refs():
+        log.log(f"is '{username} in {str(users.keys())}'?")
+        if username in users.keys():
             userobj = users.get(username)
         else:
             return render_template("login.html", message = "Wrong username", title = "Login")
         log.log(f"does {password} equal {userobj.password}?")
         if userobj.password == (password):
             token=helper.generate_token(username)
-            resp = make_response(redirect("/"))
+            path = request.args.get("redirect", "/")
+            print(path)
+            resp = make_response(redirect(path))
             resp.set_cookie("token", token)
             return resp
         return render_template("login.html", message = "Wrong Password", title = "Login")
@@ -149,10 +223,10 @@ def create_user():
         username = request.form.get("username")
         password = request.form.get("password")
         name = request.form.get("name")
-        if username in users.refs():
+        if username in users.keys():
             return render_template("createuser.html", message = "User already exists")
         log.log(f"Creating user {username} with password {password}")
-        users.put(username, db.user.User(name, password))
+        users.put(username, db.User(name, password))
         resp = make_response(redirect("/"))
         token=helper.generate_token(username)
         resp.set_cookie("token", token)
@@ -170,7 +244,7 @@ def settings():
     # AUTH
     resp = helper.authw(request)
     if resp["code"] == 401:
-        return redirect("/login")
+        return redirect("/login?redirect="+request.path)
     userobj = users.get(resp["user"])
     username = resp["user"]
     message = None

@@ -3,12 +3,15 @@
 ## First of all, messaging
 from multiprocessing import Queue
 from log import Logging, level # custom logging library
-import flask, os
+import flask, os, db
 app = flask.Flask(__name__) # for the webserver making thing
 log = Logging()
 
 
-    
+users = db.Database("db/users.dbfile")
+lessons = db.Database("db/lessons.dbfile")
+flash = db.Database("db/flashcards.dbfile")
+
 
 apiq = Queue() # input Queue for the api server
 wappq = Queue() # input Queue for the web app server

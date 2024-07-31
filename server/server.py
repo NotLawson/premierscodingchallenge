@@ -32,15 +32,14 @@ if __name__=="__main__":
     app = Flask(__name__)
     import log
     from log import level
-
+    users = db.Database("db/users.dbfile")
+    lessons = db.Database("db/lessons.dbfile")
+    flash = db.Database("db/flashcards.dbfile")
     log = log.Logging()
 else:
     from log import level
-    from __main__ import app, log
+    from __main__ import app, log, users, lessons, flash
 
-users = db.user.db()
-notes = db.lesson.db()
-flash = db.flashcards.db()
 
 
 ## API ##
@@ -140,11 +139,11 @@ def db_api(db_name, action):
                                "refs":flash.refs()})
     elif db_name=="notes":
         if action=="push":
-            notes.push()
+            lessons.push()
             return json.dumps({"code":200,
                                "message":"Pushed notes db"})
         elif action=="pull":
-            notes.pull()
+            lessons.pull()
             return json.dumps({"code":200,
                                "message":"Pushed users db"})
     return json.dumps({"code":404,

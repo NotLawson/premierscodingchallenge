@@ -7,6 +7,13 @@
 <h1>Lessons</h1>
 <p>WIP</p>
 <a href="/lessons/create">+ Create</a>
+<h2>Recents</h2>
+<div class="container">
+    {% for lesson in user.recents %}
+    {% lesson = lessons[lesson]}
+    <div class="item"><h3><a href="/lessons/{{lesson.id}}">{{lesson.name}}</a></h3><br><p>By: {{lesson.author}}</p></div>
+    {% endfor %}
+</div>
 <div class="container">
     {% for lesson in lessons %}
     <div class="item"><h3><a href="/lessons/{{lesson.id}}">{{lesson.name}}</a></h3><br><p>By: {{lesson.author}}</p></div>

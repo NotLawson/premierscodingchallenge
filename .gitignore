@@ -161,6 +161,6 @@ cython_debug/
 
 # Other project specific
 # DB files
-dbfile
+*.dbfile
 .vscode
 log.txt

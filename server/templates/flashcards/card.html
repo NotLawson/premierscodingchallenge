@@ -1,0 +1,12 @@
+{% extends "flashcards/player.html" %}
+
+{% block playerjs %}
+<script src="/static/js/player/flash.js" defer></script>
+{% endblock %}
+
+{% block question %}
+<div class="card">
+    <h1 id="term"></h1>
+    <h1 id="definition" hidden></h1> 
+</div>
+{% endblock %}
