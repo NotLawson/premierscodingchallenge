@@ -7,13 +7,29 @@
 <h1>Lessons</h1>
 <p>WIP</p>
 <a href="/lessons/create">+ Create</a>
-<h2>Recents</h2>
+<h2>Assigned</h2>
+<div class="contianer">
+    <p>WIP</p>
+</div>
+<h2>Starred</h2>
 <div class="container">
-    {% for lesson in user.recents %}
-    {% lesson = lessons[lesson]}
+    {% if len(starred)==0 %}
+    <p>No starred</p>
+    {% endif %}
+    {% for lesson in starred %}
     <div class="item"><h3><a href="/lessons/{{lesson.id}}">{{lesson.name}}</a></h3><br><p>By: {{lesson.author}}</p></div>
     {% endfor %}
 </div>
+<h2>Recents - <a href="/lessons/clear_recents">Clear</a></h2>
+<div class="container">
+    {% if len(recents)==0 %}
+    <p>No recents</p>
+    {% endif %}
+    {% for lesson in recents %}
+    <div class="item"><h3><a href="/lessons/{{lesson.id}}">{{lesson.name}}</a></h3><br><p>By: {{lesson.author}}</p></div>
+    {% endfor %}
+</div>
+<h2>All</h2>
 <div class="container">
     {% for lesson in lessons %}
     <div class="item"><h3><a href="/lessons/{{lesson.id}}">{{lesson.name}}</a></h3><br><p>By: {{lesson.author}}</p></div>

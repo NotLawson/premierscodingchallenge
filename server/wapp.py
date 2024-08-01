@@ -133,8 +133,19 @@ def lessons_home():
 
     for ref in refs:
         sets.append(lessons.get(ref))
+    
+    recents = []
+    recent_lessons = users.get(resp["user"]).recent_lessons
+    for lesson in recent_lessons:
+        recents.append(lessons.get(lesson))
+    starred = []
+    starred_lessons = users.get(resp["user"]).starred_lessons
+    for lesson in starred_lessons:
+        starred.append(lessons.get(lesson))
 
-    return render_template("lessons.html", title="Lessons", lessons=sets)
+    print(recents)
+    print(recent_lessons)
+    return render_template("lessons.html", title="Lessons", lessons=sets, recents=recents, starred=starred, len=len)
 
 @app.route("/player")
 def player():
@@ -163,7 +174,11 @@ def lessons_info(lessonid):
         return redirect("/login?redirect="+request.path)
     log.log(str(lessons.keys()), level.warn)
     lessonobj = lessons.get(lessonid)
-    return render_template("lessoninfo.html", lesson=lessonobj, username = resp["user"])
+    if lessonid in users.get(resp["user"]).starred_lessons:
+        starred=True
+    else:
+        starred=False
+    return render_template("lessoninfo.html", lesson=lessonobj, username = resp["user"], starred=starred)
 
 @app.route("/lessons/create", methods = ["GET", "POST"])
 def create_lesson():
@@ -190,10 +205,35 @@ def learn(lessonid):
     resp = helper.authw(request)
     if resp["code"] == 401:
         return redirect("/login?redirect="+request.path)
+    userobj = users.get(resp["user"])
+    recents = userobj.recent_lessons
+    if lessonid not in recents:
+        recents.reverse()
+        recents.append(lessonid)
+        recents.reverse()
+        userobj.recent_lessons = recents
+    else:
+        recents.reverse()
+        recents.remove(lessonid)
+        recents.append(lessonid)
+        recents.reverse()
+        userobj.recent_lessons = recents
+    users.put(resp["user"], userobj)
     resp = make_response(redirect("/player"))
     resp.set_cookie("lessonid", lessonid)
     resp.set_cookie("question", "1")
     return resp
+@app.route("/lessons/clear_recents")
+def clear_recent_lessons():
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login?redirect="+request.path)
+    
+    userobj = users.get(resp["user"])
+    userobj.recent_lessons = []
+    users.put(resp['user'], userobj)
+
+    return redirect("/lessons")
 
 
 @app.route("/login", methods = ["GET", "POST"])

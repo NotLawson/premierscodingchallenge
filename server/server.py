@@ -75,26 +75,31 @@ def usercreate(username, password):
     users.push()
     return json.dumps({"code":200, "message":"user added"})
 
-@app.route("/api/sets/<endpoint>", methods = ["GET", "POST", "DELETE"])
+@app.route("/api/lessons/<path:endpoint>", methods = ["GET", "POST", "DELETE"])
 def setsapi(endpoint):
     path = endpoint.split("/")
+    print(path)
     resp=helper.authw(request)
     userobj = users.get(resp["user"])
     if path[0]=="star":
-        setid=path[1]
-        userobj.starred.append("setid")
+        lessonid=path[1]
+        userobj.starred_lessons.insert(0, lessonid)
         users.put(resp["user"], userobj)
         return "{'code':200,'message':'done'}", 200
-    
+    elif path[0]=="unstar":
+        lessonid=path[1]
+        userobj.starred_lessons.remove(lessonid)
+        users.put(resp["user"], userobj)
+        return "{'code':200,'message':'done'}", 200
     elif path[0] == "create":
         name = request.headers.get("name")
         while True:
             id = helper.generate_id()
-            if id not in flash.refs():
+            if id not in lessons.refs():
                 break
         content = json.loads(request.data)["content"]
-        obj = db.flashcards.flash(id, name, userobj.name, content)
-        flash.put(id, obj)
+        obj = db.lesson(id, name, userobj.name, content)
+        lessons.put(id, obj)
         return {
             "code":200, 
             "message":"Created",

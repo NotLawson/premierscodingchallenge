@@ -7,7 +7,11 @@
 {% block content %}
 <h1>{{lesson.name}}</h1>
 <h2>By {{lesson.author}}</h2>
-<button type="button" onclick="star('{{lesson.id}}');alert('Starred!')">Star</button>
+{% if starred==True %}
+<button type="button" onclick="unstarlesson('{{lesson.id}}');alert('Remove!');location.reload()">Remove</button>
+{% else %}
+<button type="button" onclick="starlesson('{{lesson.id}}');alert('Starred!');location.reload()">Star</button>
+{% endif %}
 <button type="button" onclick="location.href='/learn/{{lesson.id}}'">Learn</button><br>
 <p>{{lesson.desc}}</p>
 {% endblock %}
