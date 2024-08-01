@@ -1,53 +1,80 @@
-# Helpers
+## Users DB
+import json, os, pickle
 
-import os, pickle
+class TokenStore:
+    tokens = []
+    def __init__(self):
+        pass
+class User:
+    __version__ = "1.0.0"
+    tokens = []
 
-## Object
-class Object:
-    def __init__(self, name, data):
+    starred_sets = []
+    recent_sets = []
+    starred_lessons = []
+    recent_lessons = []
+
+    classes = []
+    def __init__(self, name, password, permissions=0):
         self.name = name
-        self.data = data
-
-## DB
-class NoObjFound(Exception):
-    pass
-
-class _internalDB:
-    def __init__(self, dbPath=False, nosync = False):
-        if not dbPath:
-            import os
-            self.dbPath = os.path.dirname(__file__)+"/dbfile"
+        self.password = password
+        self.permissions = permissions
+    def login(self, password):
+        if password == self.password:
+            return True
         else:
-            self.dbPath = dbPath
-        if not nosync:
-            self.pull()
+            return False
+    def get_token(self, token):
+        self.tokens.append(token)
 
-    def get(self, ref):
-        try: obj = self.db_dict['db'][ref]
-        except:
-            raise NoObjFound
-        return obj
-    
-    def put(self, ref, data):
-        self.db_dict['db'][ref] = data
-        self.push()
+class Class:
+    students = []
+    teachers = []
+    assignments = [
+#        {
+#            "type":"lesson", 
+#            "id":"id", 
+#            "due":"due",
+#            "points":"points"
+#        },
+    ]
+    def __init__(self, id, name, owner):
+        self.id = id
+        self.name = name
+        self.owner = owner
+        self.teachers.append(owner)
+    def add(self, username):
+        self.students.append(username)
 
-    def refs(self):
-        ref = list(self.db_dict["db"].keys())
-        return ref
-    
-    def remove(self, ref):
-        del self.db_dict["db"][ref]
+    def remove(self, username):
+        self.students.remove(username)
+    def assign_lesson(self, id, due, points):
+        self.assignments.append({
+            "type":"lesson",
+            "id":id,
+            "due":due,
+            "points":points
+        })
+class Token:
+    def __init__(self, token, name):
+        self.token = token
+        self.user = name
+    def __str__(self):
+        return self.token
 
-    def pull(self):
-        try: self.db_dict = pickle.load(open(self.dbPath, "rb"))
-        except:
-            open(self.dbPath, "x")
-            self.db_dict = {"db":{}}
-            self.push()
+class flash:
+    def __init__(self, id, name, author, content=[]):
+        self.id = id
+        self.name = name
+        self.author = author
+        self.content = content
+        self.total = len(content)
 
-    def push(self):
-        try: pickle.dump(self.db_dict, open(self.dbPath, "wb"))
-        except:
-            open(self.dbPath, "x")
-            pickle.dump(self.db_dict, open(self.dbPath, "wb"))
+class lesson:
+    def __init__(self, id, name, author, desc, content):
+        self.id = id
+        self.name = name
+        self.author = author
+        self.content = content
+        self.desc = desc
+        self.total = len(content)

@@ -41,7 +41,7 @@ def generate_token(username):
                     break
             if not taken:
                 break
-    TOKENSTORE.tokens.append(db.user.Token(token,username))
+    TOKENSTORE.tokens.append(db.Token(token,username))
     return token
 def generate_id():
     import random
@@ -58,4 +58,4 @@ def generate_id():
     
 
 import db, json
-TOKENSTORE = db.user.TokenStore() # this start the tokenstore globally
+TOKENSTORE = db.TokenStore() # this start the tokenstore globally

@@ -32,15 +32,14 @@ if __name__=="__main__":
     app = Flask(__name__)
     import log
     from log import level
-
+    users = db.Database("db/users.dbfile")
+    lessons = db.Database("db/lessons.dbfile")
+    flash = db.Database("db/flashcards.dbfile")
     log = log.Logging()
 else:
     from log import level
-    from __main__ import app, log
+    from __main__ import app, log, users, lessons, flash
 
-users = db.user.db()
-notes = db.lesson.db()
-flash = db.flashcards.db()
 
 
 ## API ##
@@ -76,26 +75,31 @@ def usercreate(username, password):
     users.push()
     return json.dumps({"code":200, "message":"user added"})
 
-@app.route("/api/sets/<endpoint>", methods = ["GET", "POST", "DELETE"])
+@app.route("/api/lessons/<path:endpoint>", methods = ["GET", "POST", "DELETE"])
 def setsapi(endpoint):
     path = endpoint.split("/")
+    print(path)
     resp=helper.authw(request)
     userobj = users.get(resp["user"])
     if path[0]=="star":
-        setid=path[1]
-        userobj.starred.append("setid")
+        lessonid=path[1]
+        userobj.starred_lessons.insert(0, lessonid)
         users.put(resp["user"], userobj)
         return "{'code':200,'message':'done'}", 200
-    
+    elif path[0]=="unstar":
+        lessonid=path[1]
+        userobj.starred_lessons.remove(lessonid)
+        users.put(resp["user"], userobj)
+        return "{'code':200,'message':'done'}", 200
     elif path[0] == "create":
         name = request.headers.get("name")
         while True:
             id = helper.generate_id()
-            if id not in flash.refs():
+            if id not in lessons.refs():
                 break
         content = json.loads(request.data)["content"]
-        obj = db.flashcards.flash(id, name, userobj.name, content)
-        flash.put(id, obj)
+        obj = db.lesson(id, name, userobj.name, content)
+        lessons.put(id, obj)
         return {
             "code":200, 
             "message":"Created",
@@ -140,11 +144,11 @@ def db_api(db_name, action):
                                "refs":flash.refs()})
     elif db_name=="notes":
         if action=="push":
-            notes.push()
+            lessons.push()
             return json.dumps({"code":200,
                                "message":"Pushed notes db"})
         elif action=="pull":
-            notes.pull()
+            lessons.pull()
             return json.dumps({"code":200,
                                "message":"Pushed users db"})
     return json.dumps({"code":404,
