@@ -14,3 +14,4 @@ soupsieve==2.5
 urllib3==2.2.2
 Werkzeug==3.0.3
 wikipedia==1.4.0
+elara==0.5.5
