@@ -77,8 +77,8 @@ def sets():
         starred.append(lessons.get(lesson))
 
     print(recents)
-    print(recent_lessons)
-    return render_template("lessons.html", title="Lessons", lessons=sets, recents=recents, starred=starred, len=len)
+    #print(recent_lessons)
+    return render_template("lessons.html", title="Sets", lessons=sets, recents=recents, starred=starred, len=len)
     return render_template("sets.html", title="Sets", sets=sets)
 
 @app.route("/flashcards")
