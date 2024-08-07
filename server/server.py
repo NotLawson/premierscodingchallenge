@@ -76,7 +76,7 @@ def usercreate(username, password):
     return json.dumps({"code":200, "message":"user added"})
 
 @app.route("/api/lessons/<path:endpoint>", methods = ["GET", "POST", "DELETE"])
-def setsapi(endpoint):
+def lessonsapi(endpoint):
     path = endpoint.split("/")
     print(path)
     resp=helper.authw(request)
@@ -93,12 +93,13 @@ def setsapi(endpoint):
         return "{'code':200,'message':'done'}", 200
     elif path[0] == "create":
         name = request.headers.get("name")
+        desc = request.headers.get("desc")
         while True:
             id = helper.generate_id()
-            if id not in lessons.refs():
+            if id not in lessons.keys():
                 break
         content = json.loads(request.data)["content"]
-        obj = db.lesson(id, name, userobj.name, content)
+        obj = db.lesson(id, name, resp["user"], desc, content)
         lessons.put(id, obj)
         return {
             "code":200, 
@@ -107,6 +108,40 @@ def setsapi(endpoint):
         }
     else:
         return "{'code':404, 'message':'endpoint not found'}", 404
+
+@app.route("/api/sets/<path:endpoint>", methods = ["GET", "POST", "DELETE"])
+def setsapi(endpoint):
+    path = endpoint.split("/")
+    print(path)
+    resp=helper.authw(request)
+    userobj = users.get(resp["user"])
+    if path[0]=="star":
+        setid=path[1]
+        userobj.starred_sets.insert(0, setid)
+        users.put(resp["user"], userobj)
+        return "{'code':200,'message':'done'}", 200
+    elif path[0]=="unstar":
+        lessonid=path[1]
+        userobj.starred_sets.remove(setid)
+        users.put(resp["user"], userobj)
+        return "{'code':200,'message':'done'}", 200
+    elif path[0] == "create":
+        name = request.headers.get("name")
+        while True:
+            id = helper.generate_id()
+            if id not in flash.keys():
+                break
+        content = json.loads(request.data)["content"]
+        obj = db.flash(id, name, resp["user"], content)
+        flash.put(id, obj)
+        return {
+            "code":200, 
+            "message":"Created",
+            "id":id
+        }
+    else:
+        return "{'code':404, 'message':'endpoint not found'}", 404
+
 
 @app.route("/api/db/<db_name>/<action>")
 def db_api(db_name, action):

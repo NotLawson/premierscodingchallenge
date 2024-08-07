@@ -1,0 +1,171 @@
+{% extends "home.html" %}
+
+{% block imports %}
+<link href="/static/css/set.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1>Create Lesson</h1>
+<label>Name</label><br>
+<input id="lessonName" type="text"></input><br>
+<label>Description</label><br>
+<textarea id="lessonDesc"></textarea>
+<br><br>
+<button onclick="new_question('a4')">New 4 answer</button>
+<button onclick="new_question('a3')">New 3 answer</button>
+<button onclick="new_question('a2')">New 2 answer</button>
+<button onclick="new_question('slide')">New slide</button>
+
+<div class="ta4" hidden>
+      <!-- 4a -->
+      <br><br>
+      <div id="a4">
+        <label>Question</label><br>
+        <input type="text" id="question"><br>
+        <label>Correct Answer</label><br>
+        <input type="text" id="correct"><br>
+        <label>Incorrect Answers</label><br>
+        <input type="text" id="incorrect1"><br>
+        <input type="text" id="incorrect2"><br>
+        <input type="text" id="incorrect3"><br>
+    </div>
+
+</div>
+<div class="ta3" hidden>
+      <!-- 3a -->
+      <br><br>
+      <div id="a3">
+        <label>Question</label><br>
+        <input type="text" id="question"><br>
+        <label>Correct Answer</label><br>
+        <input type="text" id="correct"><br>
+        <label>Incorrect Answers</label><br>
+        <input type="text" id="incorrect1"><br>
+        <input type="text" id="incorrect2"><br>
+    </div>
+
+</div>
+<div class="ta2" hidden>
+      <!-- 2a -->
+      <br><br>
+      <div id="a2">
+        <label>Question</label><br>
+        <input type="text" id="question"><br>
+        <label>Correct Answer</label><br>
+        <input type="text" id="correct"><br>
+        <label>Incorrect Answer</label><br>
+        <input type="text" id="incorrect"><br>
+    </div>
+
+</div>
+<div class="tslide" hidden>
+      <!-- Slide -->
+      <br><br>
+      <div id="slide">
+        <label>Title</label><br>
+        <input type="text" id="title"><br>
+        <label>Content</label><br>
+        <input type="text" id="content"><br>
+    </div>
+
+</div>
+
+<div class="question slide">
+      <!-- Slide -->
+      <br><br>
+      <div id="slide">
+        <label>Title</label><br>
+        <input type="text" id="title"><br>
+        <label>Content</label><br>
+        <input type="text" id="content"><br>
+    </div>
+
+</div><br><br>
+<button onclick="submit()">Create Lesson</button>
+<script defer>
+  let current = 1;
+  let four = document.getElementsByClassName("a4")[0]
+  let three = document.getElementsByClassName("a3")[0]
+  let two = document.getElementsByClassName("a2")[0]
+  let slide = document.getElementsByClassName("slide")[0]
+  
+  
+  function save(obj) {
+    let question = {};
+    if (obj.classList.contains("a4")) {
+      let four = obj.children.a4;
+      question.type = "multi-4";
+      question.question = four.children.question.value;
+      question.answers = [null, null, null, null];
+      question.answers[0] = four.children.correct.value;
+      question.answers[1] = four.children.incorrect1.value;
+      question.answers[2] = four.children.incorrect2.value;
+      question.answers[3] = four.children.incorrect3.value;
+    } else if (obj.classList.contains("a3")) {
+      let three = obj.children.a3;
+      question.type = "multi-3";
+      question.question = three.children.question.value;
+      question.answers = [null, null, null];
+      question.answers[0] = three.children.correct.value;
+      question.answers[1] = three.children.incorrect1.value;
+      question.answers[2] = three.children.incorrect2.value;
+    } else if (obj.classList.contains("a2")) {
+      let two = obj.children.a2;
+      question.type = "multi-2";
+      question.question = two.children.question.value;
+      question.answers = [null, null];
+      question.answers[0] = two.children.correct.value;
+      question.answers[1] = two.children.incorrect.value;
+    } else {
+      let slide = obj.children.slide;
+      question.type = "slide";
+      question.question = slide.children.title.value;
+      question.answers = [slide.children.content.value];
+    };
+    return question
+  };
+  function new_question(type) {
+    let newq = null;
+    if (type==="a4"){
+      newq = document.getElementsByClassName("ta4")[0].cloneNode(true);
+      newq.classList.remove("ta4");
+      newq.classList.add("a4");
+    } else if (type==="a3") {
+      newq = document.getElementsByClassName("ta3")[0].cloneNode(true);
+      newq.classList.remove("ta3");
+      newq.classList.add("a3");
+    } else if (type==="a2") {
+      newq = document.getElementsByClassName("ta2")[0].cloneNode(true);
+      newq.classList.remove("ta2");
+      newq.classList.add("a2");
+    } else {
+      newq = document.getElementsByClassName("tslide")[0].cloneNode(true);
+      newq.classList.remove("tslide");
+      newq.classList.add("slide");
+    }
+    newq.classList.add("question");
+    newq.removeAttribute("hidden");
+    document.getElementsByClassName("question")[current-1].after(newq);
+    current = current + 1;
+  };
+  function submit() {
+    let questionshtml = Array.from(document.getElementsByClassName("question"));
+    let obj = {
+      "content":[]
+    };
+    questionshtml.forEach(item =>
+      obj.content.push(save(item))
+    );
+    let options = {
+      "body":JSON.stringify(obj),
+      "method":"POST",
+      "headers":{
+        "name":document.getElementById("lessonName").value,
+        "desc":document.getElementById("lessonDesc").value
+      }
+    };
+    fetch(window.location.origin+"/api/lessons/create", options);
+    location.href = "/lessons"
+  }
+  </script>
+{% endblock %}

@@ -4,11 +4,34 @@
 {% endblock %}
 
 {% block content %}
-<h1>Sets</h1>
+<h1>Lessons</h1>
 <p>WIP</p>
 <a href="/sets/create">+ Create</a>
+<h2>Assigned</h2>
+<div class="contianer">
+    <p>WIP</p>
+</div>
+<h2>Starred</h2>
 <div class="container">
-    {% for set in sets %}
+    {% if len(starred)==0 %}
+    <p>No starred</p>
+    {% endif %}
+    {% for lesson in starred %}
+    <div class="item"><h3><a href="/sets/{{set.id}}">{{set.name}}</a></h3><br><p>By: {{set.author}}</p></div>
+    {% endfor %}
+</div>
+<h2>Recents - <a href="/sets/clear_recents">Clear</a></h2>
+<div class="container">
+    {% if len(recents)==0 %}
+    <p>No recents</p>
+    {% endif %}
+    {% for lesson in recents %}
+    <div class="item"><h3><a href="/sets/{{set.id}}">{{set.name}}</a></h3><br><p>By: {{set.author}}</p></div>
+    {% endfor %}
+</div>
+<h2>All</h2>
+<div class="container">
+    {% for lesson in lessons %}
     <div class="item"><h3><a href="/sets/{{set.id}}">{{set.name}}</a></h3><br><p>By: {{set.author}}</p></div>
     {% endfor %}
 </div>

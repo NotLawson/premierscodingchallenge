@@ -63,9 +63,22 @@ def sets():
         return redirect("/login?redirect="+request.path)
     sets = []
     refs = flash.keys()
+
     for ref in refs:
         sets.append(flash.get(ref))
+    
+    recents = []
+    recent_sets = users.get(resp["user"]).recent_sets
+    for set in recent_sets:
+        recents.append(flash.get(set ))
+    starred = []
+    starred_lessons = users.get(resp["user"]).starred_lessons
+    for lesson in starred_lessons:
+        starred.append(lessons.get(lesson))
 
+    print(recents)
+    print(recent_lessons)
+    return render_template("lessons.html", title="Lessons", lessons=sets, recents=recents, starred=starred, len=len)
     return render_template("sets.html", title="Sets", sets=sets)
 
 @app.route("/flashcards")
@@ -95,19 +108,7 @@ def create_set():
     resp = helper.authw(request)
     if resp["code"] == 401:
         return redirect("/login?redirect="+request.path)
-    if request.method == "POST":
-        name = request.form["name"]
-        content = str(request.files["content"].read().decode("utf-8"))
-        content = json.loads(content)["content"]
-        while True:
-            id = helper.generate_id()
-            if id not in flash.keys():
-                break
-        userobj = users.get(resp["user"])
-        setobj = db.flash(id, name, userobj.name, content)
-        flash.put(id, setobj)
-        return redirect("/sets")
-    return render_template("createset.html")
+    return render_template("setcreator.html")
 
 @app.route("/play/<setid>")
 def play(setid):
@@ -185,20 +186,8 @@ def create_lesson():
     resp = helper.authw(request)
     if resp["code"] == 401:
         return redirect("/login?redirect="+request.path)
-    if request.method == "POST":
-        name = request.form["name"]
-        desc = request.form["desc"]
-        content = str(request.files["content"].read().decode("utf-8"))
-        content = json.loads(content)["content"]
-        while True:
-            id = helper.generate_id()
-            if id not in lessons.keys():
-                break
-        userobj = users.get(resp["user"])
-        lessonobj = db.lesson(id, name, userobj.name, desc, content)
-        lessons.put(id, lessonobj)
-        return redirect("/lessons")
-    return render_template("createlesson.html")
+    return render_template("lessoncreator.html")
+
 
 @app.route("/learn/<lessonid>")
 def learn(lessonid):
