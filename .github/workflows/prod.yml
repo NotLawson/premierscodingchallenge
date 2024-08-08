@@ -1,13 +1,9 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
-name: Check, build and deploy
+name: Check, build and deploy [PROD]
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   release:
 
 env:
@@ -15,7 +11,7 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: notlawson/premierscodingchallenge
-
+  
 permissions:
   contents: read
 
@@ -41,10 +37,10 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-  build-dev:
-    needs: check
+  build-prod:
+    needs: ["check"]
     runs-on: ubuntu-latest
-    environment: development
+    environment: production
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -54,14 +50,14 @@ jobs:
         with:
           registry: ghcr.io
           username: notlawson
-          password: ${{ secrets.DEV_SECRET }}
+          password: ${{ secrets.PROD_SECRET }}
 
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: server
           push: true
-          tags: ghcr.io/${{env.IMAGE_NAME}}:dev
+          tags: ghcr.io/${{env.IMAGE_NAME}}:latest
       - name: Deploy
         run: |
           curl https://premiers.thatrandompi.xyz/update
