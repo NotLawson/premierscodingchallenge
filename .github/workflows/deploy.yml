@@ -4,10 +4,6 @@
 name: Check, build and deploy
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   release:
 
 env:
