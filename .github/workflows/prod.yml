@@ -5,6 +5,7 @@ name: Check, build and deploy [PROD]
 
 on:
   release:
+    types: ["published"]
 
 env:
   # Use docker.io for Docker Hub if empty

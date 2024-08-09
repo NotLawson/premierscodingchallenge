@@ -78,8 +78,7 @@ def sets():
 
     print(recents)
     #print(recent_lessons)
-    return render_template("lessons.html", title="Sets", lessons=sets, recents=recents, starred=starred, len=len)
-    return render_template("sets.html", title="Sets", sets=sets)
+    return render_template("sets.html", title="Sets", sets=sets, recents=recents, starred=starred, len=len)
 
 @app.route("/flashcards")
 def flashcards_player():
