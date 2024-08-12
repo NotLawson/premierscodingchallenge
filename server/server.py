@@ -121,7 +121,7 @@ def setsapi(endpoint):
         users.put(resp["user"], userobj)
         return "{'code':200,'message':'done'}", 200
     elif path[0]=="unstar":
-        lessonid=path[1]
+        setid=path[1]
         userobj.starred_sets.remove(setid)
         users.put(resp["user"], userobj)
         return "{'code':200,'message':'done'}", 200
@@ -160,7 +160,7 @@ def db_api(db_name, action):
             log.log(f"Received database refs order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
             return json.dumps({"code":200,
                                "message":"found users refs",
-                               "refs":users.refs()})
+                               "refs":users.keys()})
     elif db_name=="flash":
         if action=="push":
             log.log(f"Received database push order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
@@ -176,16 +176,21 @@ def db_api(db_name, action):
             log.log(f"Received database refs order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
             return json.dumps({"code":200,
                                "message":"found flash refs",
-                               "refs":flash.refs()})
-    elif db_name=="notes":
+                               "refs":flash.keys()})
+    elif db_name=="lessons":
         if action=="push":
             lessons.push()
             return json.dumps({"code":200,
-                               "message":"Pushed notes db"})
+                               "message":"Pushed lessons db"})
         elif action=="pull":
             lessons.pull()
             return json.dumps({"code":200,
-                               "message":"Pushed users db"})
+                               "message":"Pushed lessons db"})
+        elif action=="refs":
+            return json.dumps({"code":200,
+                               "message":"found lessons refs",
+                               "refs":flash.keys()})
+        
     return json.dumps({"code":404,
                                "message":"No db found"}), 404
 

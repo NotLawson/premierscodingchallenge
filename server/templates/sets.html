@@ -16,7 +16,7 @@
     {% if len(starred)==0 %}
     <p>No starred</p>
     {% endif %}
-    {% for lesson in starred %}
+    {% for set in starred %}
     <div class="item"><h3><a href="/sets/{{set.id}}">{{set.name}}</a></h3><br><p>By: {{set.author}}</p></div>
     {% endfor %}
 </div>
@@ -25,13 +25,13 @@
     {% if len(recents)==0 %}
     <p>No recents</p>
     {% endif %}
-    {% for lesson in recents %}
+    {% for set in recents %}
     <div class="item"><h3><a href="/sets/{{set.id}}">{{set.name}}</a></h3><br><p>By: {{set.author}}</p></div>
     {% endfor %}
 </div>
 <h2>All</h2>
 <div class="container">
-    {% for lesson in lessons %}
+    {% for set in lessons %}
     <div class="item"><h3><a href="/sets/{{set.id}}">{{set.name}}</a></h3><br><p>By: {{set.author}}</p></div>
     {% endfor %}
 </div>

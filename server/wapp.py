@@ -65,16 +65,23 @@ def sets():
     refs = flash.keys()
 
     for ref in refs:
+        set = flash.get(ref)
+        set.author = users.get(set.author).name
         sets.append(flash.get(ref))
     
     recents = []
     recent_sets = users.get(resp["user"]).recent_sets
     for set in recent_sets:
-        recents.append(flash.get(set ))
+        set = flash.get(set)
+        set.author = users.get(set.author).name
+        recents.append(set)
     starred = []
-    starred_lessons = users.get(resp["user"]).starred_lessons
-    for lesson in starred_lessons:
-        starred.append(lessons.get(lesson))
+    starred_sets = users.get(resp["user"]).starred_sets
+    for set in starred_sets:
+        set = flash.get(set)
+        set.author = users.get(set.author).name
+        starred.append(set)
+
 
     print(recents)
     #print(recent_lessons)
@@ -128,24 +135,30 @@ def lessons_home():
     resp = helper.authw(request)
     if resp["code"] == 401:
         return redirect("/login?redirect="+request.path)
-    sets = []
+    lessons_l = []
     refs = lessons.keys()
 
     for ref in refs:
-        sets.append(lessons.get(ref))
+        lesson = lessons.get(ref)
+        lesson.author = users.get(lesson.author).name
+        lessons_l.append(lesson)
     
     recents = []
     recent_lessons = users.get(resp["user"]).recent_lessons
     for lesson in recent_lessons:
-        recents.append(lessons.get(lesson))
+        lesson = lesson.get(lesson)
+        lesson.author = users.get(lesson.author).name
+        recents.append(lesson)
     starred = []
     starred_lessons = users.get(resp["user"]).starred_lessons
     for lesson in starred_lessons:
-        starred.append(lessons.get(lesson))
+        lesson = lessons.get(lesson)
+        lesson.author = users.get(lesson.author).name
+        starred.append(lesson)
 
     print(recents)
     print(recent_lessons)
-    return render_template("lessons.html", title="Lessons", lessons=sets, recents=recents, starred=starred, len=len)
+    return render_template("lessons.html", title="Lessons", lessons=lessons_l, recents=recents, starred=starred, len=len)
 
 @app.route("/player")
 def player():
