@@ -151,9 +151,9 @@ def lessons_home():
     recents = []
     recent_lessons = users.get(resp["user"]).recent_lessons
     for lesson in recent_lessons:
-        lesson = lesson.get(lesson)
-        lesson.author = users.get(lesson.author).name
-        recents.append(lesson)
+            lesson = lessons.get(lesson)
+            lesson.author = users.get(lesson.author).name
+            recents.append(lesson)
     starred = []
     starred_lessons = users.get(resp["user"]).starred_lessons
     for lesson in starred_lessons:
