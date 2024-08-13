@@ -31,7 +31,7 @@
 </div>
 <h2>All</h2>
 <div class="container">
-    {% for set in lessons %}
+    {% for set in sets %}
     <div class="item"><h3><a href="/sets/{{set.id}}">{{set.name}}</a></h3><br><p>By: {{set.author}}</p></div>
     {% endfor %}
 </div>

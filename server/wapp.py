@@ -63,12 +63,10 @@ def sets():
         return redirect("/login?redirect="+request.path)
     sets = []
     refs = flash.keys()
-
     for ref in refs:
         set = flash.get(ref)
         set.author = users.get(set.author).name
         sets.append(flash.get(ref))
-    
     recents = []
     recent_sets = users.get(resp["user"]).recent_sets
     for set in recent_sets:
