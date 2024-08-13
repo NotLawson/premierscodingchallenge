@@ -77,7 +77,8 @@ def sets():
     starred_sets = users.get(resp["user"]).starred_sets
     for set in starred_sets:
         set = flash.get(set)
-        set.author = users.get(set.author).name
+        try: set.author = users.get(set.author).name
+        except: pass
         starred.append(set)
 
 
@@ -105,7 +106,13 @@ def sets_info(setid):
         return redirect("/login?redirect="+request.path)
     log.log(str(flash.keys()), level.warn)
     setobj = flash.get(setid)
-    return render_template("setinfo.html", set=setobj, username = resp["user"])
+    if setid in users.get(resp["user"]).starred_sets:
+        starred=True
+    else:
+        starred=False
+    try: setobj.author = users.get(setobj.author).name
+    except: pass
+    return render_template("setinfo.html", set=setobj, username = resp["user"], starred=starred)
 
 @app.route("/sets/create", methods = ["GET", "POST"])
 def create_set():
@@ -151,7 +158,8 @@ def lessons_home():
     starred_lessons = users.get(resp["user"]).starred_lessons
     for lesson in starred_lessons:
         lesson = lessons.get(lesson)
-        lesson.author = users.get(lesson.author).name
+        try: lesson.author = users.get(lesson.author).name
+        except: pass
         starred.append(lesson)
 
     print(recents)
@@ -189,6 +197,8 @@ def lessons_info(lessonid):
         starred=True
     else:
         starred=False
+    try: lessonobj.author = users.get(lessonobj.author).name
+    except: pass
     return render_template("lessoninfo.html", lesson=lessonobj, username = resp["user"], starred=starred)
 
 @app.route("/lessons/create", methods = ["GET", "POST"])

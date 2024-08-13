@@ -7,7 +7,11 @@
 {% block content %}
 <h1>{{set.name}}</h1>
 <h2>By {{set.author}}</h2>
-<button type="button" onclick="star('{{set.id}}');alert('Starred!')">Star</button>
+{% if starred==True %}
+<button type="button" onclick="unstarlesson('{{set.id}}');alert('Remove!');location.reload()">Remove</button>
+{% else %}
+<button type="button" onclick="starlesson('{{set.id}}');alert('Starred!');location.reload()">Star</button>
+{% endif %}
 <button type="button" onclick="location.href='/play/{{set.id}}'">Play</button><br>
 <table>
     <tr>
