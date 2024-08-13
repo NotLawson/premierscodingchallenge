@@ -8,9 +8,9 @@
 <h1>{{set.name}}</h1>
 <h2>By {{set.author}}</h2>
 {% if starred==True %}
-<button type="button" onclick="unstarlesson('{{set.id}}');alert('Remove!');location.reload()">Remove</button>
+<button type="button" onclick="unstarset('{{set.id}}');alert('Removed!');location.reload()">Remove</button>
 {% else %}
-<button type="button" onclick="starlesson('{{set.id}}');alert('Starred!');location.reload()">Star</button>
+<button type="button" onclick="starset('{{set.id}}');alert('Starred!');location.reload()">Star</button>
 {% endif %}
 <button type="button" onclick="location.href='/play/{{set.id}}'">Play</button><br>
 <table>

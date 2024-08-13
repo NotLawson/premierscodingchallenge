@@ -1,7 +1,10 @@
 //star function
-function star(id) {
+function starset(id) {
     fetch("/api/sets/star/"+id)
 };
+function unstarset(id) {
+    fetch("/api/sets/unstar/"+id)
+}
 function starlesson(id) {
     fetch("/api/lessons/star/"+id)
 }
