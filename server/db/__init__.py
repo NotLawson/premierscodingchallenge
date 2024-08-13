@@ -20,6 +20,8 @@ class Database:
         Gets an object by key
         '''
         data_pickled = self.db_handle.get(key)
+        if data_pickled == None:
+            raise Exception(message=f"Key '{key}' not found")
         data = pickle.loads(data_pickled)
         return data
     
