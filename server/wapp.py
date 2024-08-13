@@ -126,6 +126,9 @@ def play(setid):
     resp = helper.authw(request)
     if resp["code"] == 401:
         return redirect("/login?redirect="+request.path)
+    userobj = users.get(resp["user"])
+    userobj.recent_sets.insert(0, setid)
+    users.put(resp["user"], userobj)
     resp = make_response(redirect("/flashcards"))
     resp.set_cookie("setid", setid)
     resp.set_cookie("question", "1")
