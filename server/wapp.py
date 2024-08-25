@@ -1,5 +1,4 @@
 ## WEB APP ##
-from cycler import K
 from flask import Flask, render_template, url_for, request, redirect, make_response
 from datetime import datetime
 import db, os, helper, json
