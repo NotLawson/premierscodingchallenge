@@ -1,5 +1,8 @@
 FROM python:latest
 
+
+WORKDIR /usr/premiers
+
 COPY . .
 
 RUN pip install -r requirements.txt
