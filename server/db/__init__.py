@@ -21,7 +21,7 @@ class Database:
         '''
         data_pickled = self.db_handle.get(key)
         if data_pickled == None:
-            raise Exception(message=f"Key '{key}' not found")
+            return data_pickled
         data = pickle.loads(data_pickled)
         return data
     
@@ -39,3 +39,30 @@ class Database:
         return keys_list
     
 
+class Leaderboard:
+    def __init__(self):
+        self.db = Database("db/leaderboard.dbfile")
+    def addscore(self, user, score):
+        scoreobj = self.db.get(user)
+        if scoreobj == None:
+            scoreobj = {
+                "name":user,
+                "score":0
+            }
+        scoreobj["score"] += score
+        self.db.put(user, scoreobj)
+            
+
+    def leaderboard(self):
+        content = self.db.db_handle.retdb()
+        
+        keys = content.keys() #type:ignore
+        leaderboard = []
+        for key in keys:
+            leaderboard.append(pickle.loads(content[key]))
+        leaderboard.sort(key = self.sort, reverse=True)
+        return leaderboard
+
+    def sort(self, item):
+        print(item)
+        return item["score"]

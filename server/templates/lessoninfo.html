@@ -12,6 +12,9 @@
 {% else %}
 <button type="button" onclick="starlesson('{{lesson.id}}');alert('Starred!');location.reload()">Star</button>
 {% endif %}
+{% if lesson.owned == True %}
+<button type="button" onclick="dellesson('{{lesson.id}}');alert('Deleted!');location.href = '/lessons'">Delete</button>
+{% endif %}
 <button type="button" onclick="location.href='/learn/{{lesson.id}}'">Learn</button><br>
 <p>{{lesson.desc}}</p>
 {% endblock %}

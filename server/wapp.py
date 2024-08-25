@@ -1,4 +1,5 @@
 ## WEB APP ##
+from cycler import K
 from flask import Flask, render_template, url_for, request, redirect, make_response
 from datetime import datetime
 import db, os, helper, json
@@ -12,9 +13,10 @@ if __name__=="__main__":
     users = db.Database("db/users")
     lessons = db.Database("db/lessons")
     flash = db.Database("db/flash")
+    lead = db.Leaderboard()
 
 else:
-    from __main__ import app, log, users, lessons, flash
+    from __main__ import app, log, users, lessons, flash, lead
 
 class testobj:
     def __init__(self, name):
@@ -53,7 +55,10 @@ def leaderboard():
     if resp["code"] == 401:
         return redirect("/login?redirect="+request.path)
 
-    return render_template("leaderboard.html", title="Leaderboard")
+    leaderboardlist=lead.leaderboard()
+    for user in leaderboardlist:
+        user["name"] = users.get(user["name"]).name
+    return render_template("leaderboard.html", title="Leaderboard", leaderboardlist=leaderboardlist)
 
 @app.route("/sets")
 def sets():
@@ -66,19 +71,20 @@ def sets():
     for ref in refs:
         set = flash.get(ref)
         set.author = users.get(set.author).name
-        sets.append(flash.get(ref))
+        sets.append(set)
     recents = []
     recent_sets = users.get(resp["user"]).recent_sets
     for set in recent_sets:
         set = flash.get(set)
+        if set == None: break
         set.author = users.get(set.author).name
         recents.append(set)
     starred = []
     starred_sets = users.get(resp["user"]).starred_sets
     for set in starred_sets:
         set = flash.get(set)
-        try: set.author = users.get(set.author).name
-        except: pass
+        if set == None: break
+        set.author = users.get(set.author).name
         starred.append(set)
 
 
@@ -88,12 +94,16 @@ def sets():
 
 @app.route("/flashcards")
 def flashcards_player():
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login?redirect="+request.path)
     progress = int(request.cookies.get("question"))
     setid = request.cookies.get("setid")
     setobj = flash.get(setid)
     try: 
         question = setobj.content[progress-1]
     except IndexError:
+        lead.addscore(resp["user"], 10)
         return render_template("flashcards/end.html", set=setobj)
     return render_template("flashcards/card.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
 
@@ -106,6 +116,7 @@ def sets_info(setid):
         return redirect("/login?redirect="+request.path)
     log.log(str(flash.keys()), level.warn)
     setobj = flash.get(setid)
+    if resp["user"] == setobj.author: setobj.owned = True
     if setid in users.get(resp["user"]).starred_sets:
         starred=True
     else:
@@ -127,12 +138,25 @@ def play(setid):
     if resp["code"] == 401:
         return redirect("/login?redirect="+request.path)
     userobj = users.get(resp["user"])
+    if setid in userobj.recent_sets: userobj.recent_sets.remove(setid)
     userobj.recent_sets.insert(0, setid)
     users.put(resp["user"], userobj)
     resp = make_response(redirect("/flashcards"))
     resp.set_cookie("setid", setid)
     resp.set_cookie("question", "1")
     return resp
+
+@app.route("/sets/clear_recents")
+def clear_recent_sets():
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login?redirect="+request.path)
+    
+    userobj = users.get(resp["user"])
+    userobj.recent_sets = []
+    users.put(resp['user'], userobj)
+
+    return redirect("/sets")
 
 
 ## LESSONS
@@ -155,12 +179,14 @@ def lessons_home():
     recent_lessons = users.get(resp["user"]).recent_lessons
     for lesson in recent_lessons:
             lesson = lessons.get(lesson)
+            if lesson == None: break
             lesson.author = users.get(lesson.author).name
             recents.append(lesson)
     starred = []
     starred_lessons = users.get(resp["user"]).starred_lessons
     for lesson in starred_lessons:
         lesson = lessons.get(lesson)
+        if lesson == None: break
         try: lesson.author = users.get(lesson.author).name
         except: pass
         starred.append(lesson)
@@ -171,12 +197,16 @@ def lessons_home():
 
 @app.route("/player")
 def player():
+    resp = helper.authw(request)
+    if resp["code"] == 401:
+        return redirect("/login?redirect="+request.path)
     progress = int(request.cookies.get("question"))
     setid = request.cookies.get("lessonid")
     setobj = lessons.get(setid)
     try: 
         question = setobj.content[progress-1]
     except IndexError:
+        lead.addscore(resp["user"], 10)
         return render_template("lessons/end.html", lesson=setobj)
     if question["type"] == "multi-4":
         return render_template("lessons/multi-4.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
@@ -196,6 +226,7 @@ def lessons_info(lessonid):
         return redirect("/login?redirect="+request.path)
     log.log(str(lessons.keys()), level.warn)
     lessonobj = lessons.get(lessonid)
+    if resp["user"] == lessonobj.author: lessonobj.owned = True
     if lessonid in users.get(resp["user"]).starred_lessons:
         starred=True
     else:
@@ -218,18 +249,8 @@ def learn(lessonid):
     if resp["code"] == 401:
         return redirect("/login?redirect="+request.path)
     userobj = users.get(resp["user"])
-    recents = userobj.recent_lessons
-    if lessonid not in recents:
-        recents.reverse()
-        recents.append(lessonid)
-        recents.reverse()
-        userobj.recent_lessons = recents
-    else:
-        recents.reverse()
-        recents.remove(lessonid)
-        recents.append(lessonid)
-        recents.reverse()
-        userobj.recent_lessons = recents
+    if lessonid in userobj.recent_lessons: userobj.recent_lessons.remove(lessonid)
+    userobj.recent_lessons.insert(0, lessonid)
     users.put(resp["user"], userobj)
     resp = make_response(redirect("/player"))
     resp.set_cookie("lessonid", lessonid)

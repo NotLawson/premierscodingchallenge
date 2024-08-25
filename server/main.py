@@ -11,6 +11,8 @@ log = Logging()
 users = db.Database("db/users.dbfile")
 lessons = db.Database("db/lessons.dbfile")
 flash = db.Database("db/flashcards.dbfile")
+lead = db.Leaderboard()
+
 
 
 apiq = Queue() # input Queue for the api server

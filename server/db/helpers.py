@@ -8,17 +8,16 @@ class TokenStore:
 class User:
     __version__ = "1.0.0"
     tokens = []
-
-    starred_sets = []
-    recent_sets = []
-    starred_lessons = []
-    recent_lessons = []
-
-    classes = []
     def __init__(self, name, password, permissions=0):
         self.name = name
         self.password = password
         self.permissions = permissions
+
+        self.starred_sets = []
+        self.recent_sets = []
+        self.starred_lessons = []
+        self.recent_lessons = []
+        self.classes = []
     def login(self, password):
         if password == self.password:
             return True

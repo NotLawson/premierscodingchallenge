@@ -106,6 +106,13 @@ def lessonsapi(endpoint):
             "message":"Created",
             "id":id
         }
+    elif path[0] == "delete":
+        lessonid = path[1]
+        owner = lessons.get(lessonid)
+        if owner != resp["user"]:
+            return "{'code':400, 'message':'not authorised'}", 400
+        lessons.remove(lessonid)
+        return "{'code':200, 'message':'deleted'}"
     else:
         return "{'code':404, 'message':'endpoint not found'}", 404
 
@@ -139,6 +146,15 @@ def setsapi(endpoint):
             "message":"Created",
             "id":id
         }
+    elif path[0] == "delete":
+        setid = path[1]
+        owner = flash.get(setid).author
+        user = resp['user']
+        log.log(f"Does {owner} = {user}?")
+        if owner != resp["user"]:
+            return "{'code':400, 'message':'not authorised'}", 400
+        flash.remove(setid)
+        return "{'code':200, 'message':'deleted'}"
     else:
         return "{'code':404, 'message':'endpoint not found'}", 404
 

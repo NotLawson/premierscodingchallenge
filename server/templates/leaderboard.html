@@ -3,4 +3,16 @@
 {% block content %}
 <h1>Leaderboards</h1>
 <p>WIP</p>
+<table>
+    <tr>
+        <th><p>Name</p></th>
+        <th><p>Score</p></th>
+    </tr>
+{% for user in leaderboardlist %}
+    <tr>
+        <td><p>{{user["name"]}}</p></td>
+        <td><p>{{user["score"]}}</p></td>
+    </tr>
+{% endfor %}
+</table>
 {% endblock %}

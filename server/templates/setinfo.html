@@ -12,6 +12,9 @@
 {% else %}
 <button type="button" onclick="starset('{{set.id}}');alert('Starred!');location.reload()">Star</button>
 {% endif %}
+{% if set.owned == True %}
+<button type="button" onclick="delset('{{set.id}}');alert('Deleted!');location.href = '/sets'">Delete</button>
+{% endif %}
 <button type="button" onclick="location.href='/play/{{set.id}}'">Play</button><br>
 <table>
     <tr>
