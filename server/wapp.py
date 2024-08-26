@@ -143,6 +143,7 @@ def play(setid):
     resp = make_response(redirect("/flashcards"))
     resp.set_cookie("setid", setid)
     resp.set_cookie("question", "1")
+    resp.set_cookie("score", "0")
     return resp
 
 @app.route("/sets/clear_recents")
@@ -205,8 +206,10 @@ def player():
     try: 
         question = setobj.content[progress-1]
     except IndexError:
-        lead.addscore(resp["user"], 10)
-        return render_template("lessons/end.html", lesson=setobj)
+        score = int(request.cookies.get("score"))
+        points = int(round(((score/setobj.total)*10), 0))
+        lead.addscore(resp["user"], points)
+        return render_template("lessons/end.html", lesson=setobj, score = score, points = points)
     if question["type"] == "multi-4":
         return render_template("lessons/multi-4.html", set=setobj, progress=progress-1,progressjs = progress, question=question, int=int)
     elif question["type"] == "multi-3":
@@ -254,6 +257,7 @@ def learn(lessonid):
     resp = make_response(redirect("/player"))
     resp.set_cookie("lessonid", lessonid)
     resp.set_cookie("question", "1")
+    resp.set_cookie("score", "0")
     return resp
 @app.route("/lessons/clear_recents")
 def clear_recent_lessons():

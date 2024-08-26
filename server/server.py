@@ -108,7 +108,7 @@ def lessonsapi(endpoint):
         }
     elif path[0] == "delete":
         lessonid = path[1]
-        owner = lessons.get(lessonid)
+        owner = lessons.get(lessonid).author
         if owner != resp["user"]:
             return "{'code':400, 'message':'not authorised'}", 400
         lessons.remove(lessonid)

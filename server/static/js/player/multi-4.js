@@ -1,5 +1,20 @@
 let answered = false;
 let newprogress;
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
 function keydown(e) {
     let key = e.key;    
     console.log(key);
@@ -46,6 +61,8 @@ function answer(guess) {
         document.getElementById(guess).classList.add("incorrect")
     }else{
         addConfetti();
+        let score = Number(getCookie("score"))+1;
+        document.cookie = "score="+score.toString()+";"
     }
 }
 
