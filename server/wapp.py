@@ -23,9 +23,9 @@ def index():
 
     resp = helper.authw(request)
     if resp["code"] == 401:
-        return redirect("/login?redirect="+request.path)
+        # if logged out, show logged out welcome page
+        return render_template("loggedouthome.html")
     userobj = users.get(resp["user"])
-
 
     # format date string
     day = datetime.now().strftime("%A")
@@ -495,7 +495,7 @@ def create_user():
         
         users.put(username, db.User(name, password)) # put the new user in the data base
 
-        resp = make_response(redirect("/")) # redirect home
+        resp = make_response(redirect("/learn/welcome")) # redirect to tutorial
 
         token=helper.generate_token(username) # create a token
         resp.set_cookie("token", token)       #

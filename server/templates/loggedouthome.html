@@ -1,0 +1,148 @@
+<html>
+    <head>
+        <title>Quizzle</title>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+        <style>
+ 
+ h1, h2, h3, p, a, li, label {
+    font-family: "Solway", sans-serif;
+    font-style: normal;
+}
+.main {
+    text-align: center;
+    padding: 50px 50px 50px 50px;
+    max-width: 500px;
+    margin: auto;
+}
+body {
+    background-color: #FFFFFF;
+    font-size: 150%;
+}
+.navbar {
+    padding: 30px 30px 30px 30px;
+    
+    border-radius: 20px;
+    background-color: white;
+}
+.wrapper{
+	width: 100%;
+	position: relative;
+	margin: 0 auto;
+	margin-left: 20%;
+}
+.sentence{
+	margin: 0 auto;
+	text-align: left;
+	
+}
+.sentence span{
+	color: #333;
+	font-size: 2em;
+	font-weight: 300;
+  	
+}
+.words{
+	display: inline;
+	text-indent: 10px;
+}
+.words span{
+	position: absolute;
+	opacity: 0;
+	overflow: hidden;
+	width: 100%;
+  font-weight: 700;
+}
+.rotate span{
+	-webkit-animation:  rotateWord 18s linear infinite;
+	        animation:  rotateWord 18s linear infinite;
+}
+.words span:nth-child(1) {
+	color: #FF0004;
+}
+.words span:nth-child(2) { 
+	color: #FF6E00;
+	-webkit-animation-delay: 3s; 
+	        animation-delay: 3s; 
+}
+.words span:nth-child(3) { 
+	color: #FFED00;
+	-webkit-animation-delay: 6s; 
+	        animation-delay: 6s; 
+}
+.words span:nth-child(4) {
+	color: #0FB402; 
+	-webkit-animation-delay: 9s; 
+	        animation-delay: 9s; 
+}
+.words span:nth-child(5) {
+	color: #0383F9;
+	-webkit-animation-delay: 12s; 
+	        animation-delay: 12s; 
+}
+.words span:nth-child(6) {
+	color: #8600F9;
+	-webkit-animation-delay: 15s; 
+	        animation-delay: 15s; 
+}
+@-webkit-keyframes rotateWord {
+    0% { opacity: 0; }
+    2% { opacity: 0; -webkit-transform: translateY(-30px); }
+	5% { opacity: 1; -webkit-transform: translateY(0px);}
+    25% { opacity: 1; -webkit-transform: translateY(0px); }
+	27% { opacity: 0; -webkit-transform: translateY(30px); }
+	80% { opacity: 0; }
+    100% { opacity: 0; }
+}
+@-ms-keyframes rotateWord {
+    0% { opacity: 0; }
+    2% { opacity: 0; -ms-transform: translateY(-30px); }
+	5% { opacity: 1; -ms-transform: translateY(0px);}
+    17% { opacity: 1; -ms-transform: translateY(0px); }
+	20% { opacity: 0; -ms-transform: translateY(30px); }
+	80% { opacity: 0; }
+    100% { opacity: 0; }
+}
+@keyframes rotateWord {
+    0% { opacity: 0; }
+    2% { opacity: 0; -webkit-transform: translateY(-30px); transform: translateY(-30px); }
+	5% { opacity: 1; -webkit-transform: translateY(0px); transform: translateY(0px);}
+    17% { opacity: 1; -webkit-transform: translateY(0px); transform: translateY(0px); }
+	20% { opacity: 0; -webkit-transform: translateY(30px); transform: translateY(30px); }
+	80% { opacity: 0; }
+    100% { opacity: 0; }
+}
+@media screen and (max-width: 420px) {
+    .words{
+	display: block;
+	text-indent: 0px;
+}
+}
+        </style>
+    </head>
+    <body>
+        <div id="main" class="maincontainer">
+            <!--MAIN CONTENT-->
+            <div id="content" class="content">
+                <br><br><br><br><br>
+                <section class="wrapper">
+                    <div class="sentence">
+                          <h1><span>Welcome to </span>
+                          <div class="words rotate">
+                              <span>Learning</span>
+                              <span>Studying</span>
+                              <span>Fun</span>
+                              <span>Engaged</span>
+                              <span>Full marks</span>
+                              <span>Quizzle</span>
+                          </div></h1>
+                      <br/>
+                      <button type="button" style="text-align: center;height:50;width:500px;border-radius: 25px;" onclick="location.href='/login'">Jump In!</button>
+      
+                    </div>
+                  </section> 
+            </div>
+        </div>
+    </body>
+</html>

@@ -13,9 +13,9 @@ class User:
         self.password = password
         self.permissions = permissions
 
-        self.starred_sets = []
+        self.starred_sets = ["welcome"]
         self.recent_sets = []
-        self.starred_lessons = []
+        self.starred_lessons = ["welcome"]
         self.recent_lessons = []
         self.classes = []
     def login(self, password):

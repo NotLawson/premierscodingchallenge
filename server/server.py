@@ -85,7 +85,8 @@ def lessonsapi(endpoint):
         content = json.loads(request.data)["content"] # loads set data
         obj = db.lesson(id, name, resp["user"], desc, content) # create a lesson
         lessons.put(id, obj) # pushes to the database
-        log.log(f"Lesson created for {resp["user"]}, id: {id}, name: '{name}'", level.done)
+        user = resp["user"]
+        log.log(f"Lesson created for {user}, id: {id}, name: '{name}'", level.done)
         return {
             "code":200, 
             "message":"Created",
@@ -97,11 +98,11 @@ def lessonsapi(endpoint):
 
         owner = lessons.get(lessonid).author # get 
         if owner != resp["user"]:
-            log.log(f"User {resp["user"]} not authorised to delete {lessonid}", level.error)
+            log.log(f"User {user} not authorised to delete {lessonid}", level.error)
             return {'code':400, 'message':'not authorised'}, 400
         
         lessons.remove(lessonid)
-        log.log(f"Lesson {lessonid} successfully deleted by {resp["user"]}", level.done)
+        log.log(f"Lesson {lessonid} successfully deleted by {resp['user']}", level.done)
         return {'code':200, 'message':'deleted'}
     else:
         log.log(f"Endpoint {[path]} not found", level.warn)
