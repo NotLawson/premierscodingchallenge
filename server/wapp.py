@@ -9,9 +9,9 @@ if __name__=="__main__": # when running standalone
     app = Flask(__name__)
     log = Logging("web app", level.debug)
     
-    users = db.Database("db/users")
-    lessons = db.Database("db/lessons")
-    flash = db.Database("db/flash")
+    users = db.Database("db/dbfiles/users.dbfile")
+    lessons = db.Database("db/dbfiles/lessons.dbfile")
+    flash = db.Database("db/dbfiles/flashcards.dbfile")
     lead = db.Leaderboard()
 
 else: # when running in main file

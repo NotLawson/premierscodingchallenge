@@ -14,9 +14,9 @@ if __name__=="__main__": # when running standalone DEVELOPMENT ONLY
     app = Flask(__name__)
     import log
     from log import level
-    users = db.Database("db/users.dbfile")
-    lessons = db.Database("db/lessons.dbfile")
-    flash = db.Database("db/flashcards.dbfile")
+    users = db.Database("db/dbfiles/users.dbfile")
+    lessons = db.Database("db/dbfiles/lessons.dbfile")
+    flash = db.Database("db/dbfiles/flashcards.dbfile")
     log = log.Logging()
 else: # when running from the main server file
     from log import level

@@ -6,9 +6,9 @@ log = Logging()
 
 
 ## Databases
-users = db.Database("db/users.dbfile")
-lessons = db.Database("db/lessons.dbfile")
-flash = db.Database("db/flashcards.dbfile")
+users = db.Database("db/dbfiles/users.dbfile")
+lessons = db.Database("db/dbfiles/lessons.dbfile")
+flash = db.Database("db/dbfiles/flashcards.dbfile")
 lead = db.Leaderboard()
 
 ## Make sure the developer user exists
