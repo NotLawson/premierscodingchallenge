@@ -41,7 +41,7 @@ class Database:
 
 class Leaderboard:
     def __init__(self):
-        self.db = Database("db/leaderboard.dbfile")
+        self.db = Database("db/dbfiles/leaderboard.dbfile")
     def addscore(self, user, score):
         scoreobj = self.db.get(user)
         if scoreobj == None:
