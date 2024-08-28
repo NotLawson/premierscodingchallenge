@@ -1,34 +1,16 @@
 # Main Server file
-# Server/
-#   - api/
-#       - userdata/
-#          - flashcards AUTH -
-#              - GET: Gets flashcards for a user
-#              - POST: Updates flashcards for a user
-#              - DELETE: Deletes flashcard set for a user
-#          - notes AUTH -
-#              - GET Gets notes
-#              - POST: Adds notes
-#              - DELETE: Deletes notes sets
-
 
 ## IMPORTS ##
 from flask import Flask, request # For the webserver
 import json # For data handling
-from dotenv import load_dotenv # For .env
-from os import getenv # For using .env
 import os # for good measure
-env=getenv
-import random # For token generation
 import db
 import helper
 
 
 
 ## Setup ##
-
-load_dotenv() # Load env
-if __name__=="__main__":
+if __name__=="__main__": # when running standalone DEVELOPMENT ONLY
     app = Flask(__name__)
     import log
     from log import level
@@ -36,181 +18,155 @@ if __name__=="__main__":
     lessons = db.Database("db/lessons.dbfile")
     flash = db.Database("db/flashcards.dbfile")
     log = log.Logging()
-else:
+else: # when running from the main server file
     from log import level
-    from __main__ import app, log, users, lessons, flash
-
-
+    from __main__ import app, log, users, lessons, flash # take from main file
+log.log("API loaded")
 
 ## API ##
 @app.route("/api/auth/token")
 def get_token():
+    # Creates a login token
     user = request.headers.get("x-api-user")
     password = request.headers.get("x-api-password")
-    log.log(f"is '{user} in {users.refs()}'")
-    if user in users.refs():
-        userobj = users.get(user)
-        if userobj.password == password:
-            token=helper.generate_token(user)
-            return json.dumps({"code":200,
-                    "message":"Success",
-                    "token":token})
-    return json.dumps({
-        'code':401,
+
+    if user in users.refs(): # cheking if user valid
+        userobj = users.get(user) # getting user object
+
+        if userobj.password == password: # matching password
+            token=helper.generate_token(user) # creating token
+            log.log("Successful token request for "+user, level.done)
+            return {
+                "code":200,             #
+                "message":"Success",    # sending token to client
+                "token":token           #
+            }                           # 
+    log.log("Unsuccessful token request for "+user, level.warn)
+    return {
+        "code":401,
         "message":"Invalid Credentials",
         "credentials":[user, password]
-    }), 401
-        
+    }, 401
 
 @app.route("/api/auth")
 def auth(request=request):
+    # auth request, for pages that require login
     return helper.auth(request)
-
-@app.route("/api/usercreate/<username>/<password>/")
-def usercreate(username, password):
-    if username in users.refs():
-        return json.dumps({"code":500, "message":"user already exists"}), 500
-    user = db.user.User(username, password)
-    users.put(username, user)
-    users.push()
-    return json.dumps({"code":200, "message":"user added"})
 
 @app.route("/api/lessons/<path:endpoint>", methods = ["GET", "POST", "DELETE"])
 def lessonsapi(endpoint):
+    # api for Lessons
     path = endpoint.split("/")
-    print(path)
-    resp=helper.authw(request)
-    userobj = users.get(resp["user"])
-    if path[0]=="star":
+
+    resp=helper.authw(request) # auth
+    userobj = users.get(resp["user"]) # get user object
+
+    if path[0]=="star": # star endpoint
         lessonid=path[1]
-        userobj.starred_lessons.insert(0, lessonid)
+        userobj.starred_lessons.insert(0, lessonid) #inserts the starred lesson into starred list
         users.put(resp["user"], userobj)
-        return "{'code':200,'message':'done'}", 200
-    elif path[0]=="unstar":
+        return {'code':200,'message':'done'}, 200
+    
+    elif path[0]=="unstar": # unstar endpoint
         lessonid=path[1]
-        userobj.starred_lessons.remove(lessonid)
+        userobj.starred_lessons.remove(lessonid) # removes the lesson from the starred list
         users.put(resp["user"], userobj)
-        return "{'code':200,'message':'done'}", 200
-    elif path[0] == "create":
+        return {'code':200,'message':'done'}, 200
+    
+    elif path[0] == "create": # create a lesson
         name = request.headers.get("name")
         desc = request.headers.get("desc")
-        while True:
+
+        while True: # generate ID
             id = helper.generate_id()
             if id not in lessons.keys():
                 break
-        content = json.loads(request.data)["content"]
-        obj = db.lesson(id, name, resp["user"], desc, content)
-        lessons.put(id, obj)
+        
+        content = json.loads(request.data)["content"] # loads set data
+        obj = db.lesson(id, name, resp["user"], desc, content) # create a lesson
+        lessons.put(id, obj) # pushes to the database
+        log.log(f"Lesson created for {resp["user"]}, id: {id}, name: '{name}'", level.done)
         return {
             "code":200, 
             "message":"Created",
             "id":id
         }
-    elif path[0] == "delete":
+    
+    elif path[0] == "delete": # delete endpoint
         lessonid = path[1]
-        owner = lessons.get(lessonid).author
+
+        owner = lessons.get(lessonid).author # get 
         if owner != resp["user"]:
-            return "{'code':400, 'message':'not authorised'}", 400
+            log.log(f"User {resp["user"]} not authorised to delete {lessonid}", level.error)
+            return {'code':400, 'message':'not authorised'}, 400
+        
         lessons.remove(lessonid)
-        return "{'code':200, 'message':'deleted'}"
+        log.log(f"Lesson {lessonid} successfully deleted by {resp["user"]}", level.done)
+        return {'code':200, 'message':'deleted'}
     else:
-        return "{'code':404, 'message':'endpoint not found'}", 404
+        log.log(f"Endpoint {[path]} not found", level.warn)
+        return {'code':404, 'message':'endpoint not found'}, 404
 
 @app.route("/api/sets/<path:endpoint>", methods = ["GET", "POST", "DELETE"])
 def setsapi(endpoint):
+    # api for sets
     path = endpoint.split("/")
-    print(path)
-    resp=helper.authw(request)
-    userobj = users.get(resp["user"])
-    if path[0]=="star":
+
+    resp=helper.authw(request) # auth
+    userobj = users.get(resp["user"]) # get user obj
+
+    if path[0]=="star": # star endpoint
         setid=path[1]
-        userobj.starred_sets.insert(0, setid)
-        users.put(resp["user"], userobj)
-        return "{'code':200,'message':'done'}", 200
-    elif path[0]=="unstar":
+
+        userobj.starred_sets.insert(0, setid) # add set to starred
+
+        users.put(resp["user"], userobj) # push user obj
+
+        return {'code':200,'message':'done'}, 200
+    
+    elif path[0]=="unstar": # unstar endpoint
         setid=path[1]
-        userobj.starred_sets.remove(setid)
-        users.put(resp["user"], userobj)
-        return "{'code':200,'message':'done'}", 200
-    elif path[0] == "create":
+
+        userobj.starred_sets.remove(setid) # remove from starred
+
+        users.put(resp["user"], userobj) # push user
+
+        return {'code':200,'message':'done'}, 200
+    
+    elif path[0] == "create": # create sets endpoint
         name = request.headers.get("name")
-        while True:
+
+        while True: # generate id
             id = helper.generate_id()
             if id not in flash.keys():
                 break
-        content = json.loads(request.data)["content"]
-        obj = db.flash(id, name, resp["user"], content)
-        flash.put(id, obj)
+
+        content = json.loads(request.data)["content"] # parse content
+
+        obj = db.flash(id, name, resp["user"], content) # create sets obj
+        flash.put(id, obj) # save to database
+
         return {
             "code":200, 
             "message":"Created",
             "id":id
         }
-    elif path[0] == "delete":
+    
+    elif path[0] == "delete": # delete endpoint
         setid = path[1]
-        owner = flash.get(setid).author
-        user = resp['user']
-        log.log(f"Does {owner} = {user}?")
+
+        owner = flash.get(setid).author # get set owner
+        user = resp['user'] # get current user
+
         if owner != resp["user"]:
-            return "{'code':400, 'message':'not authorised'}", 400
-        flash.remove(setid)
-        return "{'code':200, 'message':'deleted'}"
-    else:
-        return "{'code':404, 'message':'endpoint not found'}", 404
-
-
-@app.route("/api/db/<db_name>/<action>")
-def db_api(db_name, action):
-    if db_name=="users":
-        if action=="push":
-            log.log(f"Received database push order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
-            users.push()
-            return json.dumps({"code":200,
-                               "message":"Pushed users db"})
-        elif action=="pull":
-            log.log(f"Received database pull order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
-            users.pull()
-            return json.dumps({"code":200,
-                               "message":"Pulled users db"})
-        elif action=="refs":
-            log.log(f"Received database refs order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
-            return json.dumps({"code":200,
-                               "message":"found users refs",
-                               "refs":users.keys()})
-    elif db_name=="flash":
-        if action=="push":
-            log.log(f"Received database push order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
-            flash.push()
-            return json.dumps({"code":200,
-                               "message":"Pushed flash db"})
-        elif action=="pull":
-            log.log(f"Received database pull order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
-            flash.pull()
-            return json.dumps({"code":200,
-                               "message":"Pulled flash db"})
-        elif action=="refs":
-            log.log(f"Received database refs order for {db_name}", level.warn, name = f"Server (/api/db/{db_name}/{action})")
-            return json.dumps({"code":200,
-                               "message":"found flash refs",
-                               "refs":flash.keys()})
-    elif db_name=="lessons":
-        if action=="push":
-            lessons.push()
-            return json.dumps({"code":200,
-                               "message":"Pushed lessons db"})
-        elif action=="pull":
-            lessons.pull()
-            return json.dumps({"code":200,
-                               "message":"Pushed lessons db"})
-        elif action=="refs":
-            return json.dumps({"code":200,
-                               "message":"found lessons refs",
-                               "refs":flash.keys()})
+            return {'code':400, 'message':'not authorised'}, 400
         
-    return json.dumps({"code":404,
-                               "message":"No db found"}), 404
+        flash.remove(setid) # delete
+        return {'code':200, 'message':'deleted'}
+    else:
+        return {'code':404, 'message':'endpoint not found'}, 404
+
 
 ## Starting ##
 if __name__ == "__main__":
-    DEBUG = bool(env("DEBUG"))
-    app.run(host=env("host"), port=env("port"), debug=DEBUG)
+    app.run(host="0.0.0.0", port=5001, debug=True)

@@ -8,13 +8,8 @@
                 <h1>Hello, {{user.name}}</h1>
                 <h2>{{date}}</h2>
                 <div class="container">
-                    <div class="item"><p>Suggestion 1</p></div>
-                    <div class="item"><p>Suggestion 2</p></div>
-                    <div class="item"><p>Suggestion 3</p></div>
-                    <div class="item"><p>Suggestion 4</p></div>
-                    <div class="item"><p>Suggestion 5</p></div>
-                    <div class="item"><p>Suggestion 6</p></div>
-                    <div class="item"><p>Suggestion 7</p></div>
-                    <div class="item"><p>Suggestion 8</p></div>
+                    {% for suggestion in suggestions %}
+                    <div class="item"><h3><a href="{{suggestion.link}}">{{suggestion.title}}</a><br></h3><p>{{suggestion.desc}}</p></div>
+                    {% endfor %}
                 </div>
 {% endblock %} 

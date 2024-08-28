@@ -56,6 +56,11 @@ def generate_id():
         i+=1
     return token
     
+class Suggestion:
+    def __init__(self, title, link, desc):
+        self.title = title
+        self.link = link
+        self.desc = desc
 
 import db, json
 TOKENSTORE = db.TokenStore() # this start the tokenstore globally
