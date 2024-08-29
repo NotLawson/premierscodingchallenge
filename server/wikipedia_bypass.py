@@ -2,6 +2,8 @@
 ## parameters are sent using flask, and the response from the server is pickled before returning/or if not an object just returned normally
 ## This is the server side, will be used in the main server file
 
+## NOTE: This isn't being used anymore, but this file is still part of the program to help out a friend of mine
+
 from flask import Flask, request
 import json
 import wikipedia

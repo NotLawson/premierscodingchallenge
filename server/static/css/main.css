@@ -7,14 +7,13 @@ h1, h2, h3, p, a, li, label {
     padding: 50px 50px 50px 50px;
 }
 body {
-    background-color: #FFFFFF;
+    background-color: #7cff98;
     font-size: 150%;
 }
 .navbar {
     padding: 30px 30px 30px 30px;
     
     border-radius: 20px;
-    background-color: white;
 }
 
 .maincontainer {
@@ -24,9 +23,9 @@ body {
     column-gap: 30px;
 }
 .content {
-    padding: 30px 30px 30px 30px;
+    padding: 50px 50px 50px 50px;
     border-radius: 20px;
-    background-color: white;
+    background-color: #ffffffc0;
 }
 .button {
     display: inline-block;
