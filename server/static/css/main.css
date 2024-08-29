@@ -7,7 +7,7 @@ h1, h2, h3, p, a, li, label {
     padding: 50px 50px 50px 50px;
 }
 body {
-    background-color: #7cff98;
+    background-color: #ffcb90;
     font-size: 150%;
 }
 .navbar {
@@ -25,7 +25,7 @@ body {
 .content {
     padding: 50px 50px 50px 50px;
     border-radius: 20px;
-    background-color: #ffffffc0;
+    background-color: #ffffff80;
 }
 .button {
     display: inline-block;

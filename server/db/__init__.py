@@ -1,8 +1,6 @@
 ## Just a wrapper for elara, the database I'm using
 from .helpers import *
 import elara, pickle
-from elara import exceptions
-exceptions.FileAccessError
 class Database:
     def __init__(self, path, key=None, commit=True):
         if key==None:
