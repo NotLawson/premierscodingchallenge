@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<h1>settings</h1>
+<h1>Settings</h1>
 {% if message != None %}
 <div class="error"><h3>{{ message }}</h3></div>
 {% endif %}
@@ -15,5 +15,6 @@
     <label for="password"><p>Password:</p></label>
     <input type="password" id="password" name="password">
     <input type="submit" value="Update">
-</form>  
+</form>
+<p>Found an issue? Contact me <a href="https://github.com/NotLawson/premierscodingchallenge/issues/new/choose">here</a></p>
 {% endblock %}
