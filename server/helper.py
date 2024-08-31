@@ -1,10 +1,8 @@
 # Helper functions
 def auth(request):
     token = request.headers.get("x-api-token")
-    print(token)
     if token == None:
         token = request.cookies.get("token")
-        print(token)
     valid = False
     for i in TOKENSTORE.tokens:
         if i.token == token:
@@ -20,7 +18,6 @@ def auth(request):
     }), 401
 def authw(request):
     resp, _ = auth(request)
-    print(resp)
     return json.loads(resp)
 
 def generate_token(username):
