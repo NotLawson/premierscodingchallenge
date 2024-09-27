@@ -1,6 +1,8 @@
 # Premier's Coding Challenge 2024
 [![Check, build and deploy [DEV]](https://github.com/NotLawson/premierscodingchallenge/actions/workflows/dev.yml/badge.svg)](https://github.com/NotLawson/premierscodingchallenge/actions/workflows/dev.yml)
 [![Check, build and deploy [PROD]](https://github.com/NotLawson/premierscodingchallenge/actions/workflows/prod.yml/badge.svg)](https://github.com/NotLawson/premierscodingchallenge/actions/workflows/prod.yml)
+![GitHub Tag](https://img.shields.io/github/v/tag/notlawson/premierscodingchallenge?label=Version)
+
 > <b>The app is now LIVE at https://premiers.thatrandompi.xyz</b>
 
 This repository contains the code for my 2024 Premiers Coding Challenge. It is a web app similar to Quizlet, with a flashcards feature and lessons feature. 
