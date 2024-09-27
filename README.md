@@ -5,8 +5,6 @@
 
 This repository contains the code for my 2024 Premiers Coding Challenge. It is a web app similar to Quizlet, with a flashcards feature and lessons feature. 
 
-> THIS IS STILL IN DEVELOPMENT. Check the release notes for what works and what doesn't
-
 ## Background
 
 <b>[Notion page for project tracking](https://notlawson.notion.site/Digital-Tech-Project-29619290f81d4ec6b35c3d7f72906a30?pvs=4)</b>
@@ -71,15 +69,14 @@ Another extra I thought of was a Discord Bot for student led study servers.
 
 Problems:
 
-- Being student led, students can create thier own quiz sets. This could lead to some students creating extremely easy sets and cheating points -> in app cosmetics
+- Being student led, students can create their own quiz sets. This could lead to some students creating extremely easy sets and cheating points -> in app cosmetics
 - Might be way beyond my skill level? (come to think of it, it probably is :D)
 
 
-
 ## Development
+To make this app, I have used Flask (I know, bad practice) as a web server, Elara, a Python-specific database, and Docker to run the hold the entire contraption 
 
-*haven't started yet*
+It took a while to make, as this is probably my biggest project yet. Let's hope the effort paid off!
 
 ## Quickstart
-
-*not finished*
+See the README inside the server folder
