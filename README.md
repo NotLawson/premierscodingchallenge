@@ -1,4 +1,4 @@
-# Premier's Coding Challenge 2024
+# Premier's Coding Challenge 2024 ([WINNER!!](https://education.qld.gov.au/about-us/events-awards/awards-competitions/premiers-coding-challenge/winning-entries#:~:text=Lawson%2C%20West%20Moreton%20Anglican%20College%20(Karrabin)))
 [![Check, build and deploy [DEV]](https://github.com/NotLawson/premierscodingchallenge/actions/workflows/dev.yml/badge.svg)](https://github.com/NotLawson/premierscodingchallenge/actions/workflows/dev.yml)
 [![Check, build and deploy [PROD]](https://github.com/NotLawson/premierscodingchallenge/actions/workflows/prod.yml/badge.svg)](https://github.com/NotLawson/premierscodingchallenge/actions/workflows/prod.yml)
 ![GitHub Tag](https://img.shields.io/github/v/tag/notlawson/premierscodingchallenge?label=Version)
